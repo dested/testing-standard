@@ -59,7 +59,7 @@ The name says what a test is allowed to depend on, so nobody has to open a file 
 
 ## One command: `gate`
 
-[`gate`](https://github.com/dested/destedtui/blob/main/features/gate.md) reads `gate.json` at the repo root and runs the checks in order:
+[`gate`](https://github.com/dested/destedtui/blob/master/features/gate.md) reads `gate.json` at the repo root and runs the checks in order:
 
 1. Copies the commit with `git archive` into a work folder. Uncommitted and untracked files are left behind.
 2. Creates a fresh, migrated `gate_*` Postgres database for the run and hands the checks its URL. A template keyed on the schema makes this quick the second time.
