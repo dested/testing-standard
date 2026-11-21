@@ -1,0 +1,411 @@
+<title>Testing Standard</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column on cool paper, the third page in the testing set. White sheets hold figures; colour always means one of the four checks, ink means the live check, red means a bug that got through. One look, light only. */
+:root {
+  --paper: #f1f3f6; --sheet: #ffffff; --ink: #0d1420; --ink-2: #3c4758; --ink-3: #6b7689; --line: #dce1e9; --line-2: #c5ccd8; --wash: #e8ecf2;
+  --types: #2a78d6; --rules: #eda100; --api: #6250d6; --flows: #1baf7a; --live: #0d1420; --miss: #e34948; --miss-wash: #fdf1f0; --ok-wash: #e6f6ee; --ok-ink: #0c6b47;
+  --display: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif; --body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif; --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Consolas, monospace;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1060px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 96px; display: flex; flex-direction: column; gap: 80px; }
+h1, h2, h3 { font-family: var(--display); color: var(--ink); margin: 0; text-wrap: balance; letter-spacing: -0.015em; }
+h1 { font-size: clamp(2.05rem, 5.2vw, 3.5rem); line-height: 1.03; font-weight: 750; max-width: 20ch; }
+h2 { font-size: clamp(1.5rem, 3.3vw, 2.2rem); line-height: 1.1; font-weight: 700; max-width: 27ch; }
+h3 { font-size: 1.08rem; line-height: 1.25; font-weight: 650; letter-spacing: -0.005em; }
+p { margin: 0; max-width: 66ch; color: var(--ink-2); }
+p strong, span strong { color: var(--ink); font-weight: 600; }
+a { color: inherit; }
+code { font-family: var(--mono); font-size: 0.86em; background: var(--wash); padding: 0.12em 0.38em; border-radius: 5px; color: var(--ink); white-space: nowrap; }
+section { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+
+.hero { gap: 28px; }
+.lead { font-size: clamp(1.05rem, 1.9vw, 1.22rem); line-height: 1.5; max-width: 60ch; }
+.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.tile { background: var(--sheet); border: 1px solid var(--line); border-radius: 14px; padding: 18px 18px 16px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.tile b { font-family: var(--display); font-size: clamp(1.9rem, 4.2vw, 2.7rem); line-height: 1; font-weight: 750; letter-spacing: -0.02em; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.tile b small { font-size: 0.5em; font-weight: 600; color: var(--ink-3); letter-spacing: 0; margin-left: 0.1em; }
+.tile span { color: var(--ink-2); font-size: 0.93rem; line-height: 1.35; }
+.ask { background: var(--ink); color: #fff; border-radius: 18px; padding: 26px 28px; display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.5fr); gap: 28px; align-items: start; }
+.ask h3 { color: #fff; font-size: clamp(1.25rem, 2.4vw, 1.6rem); line-height: 1.15; font-weight: 700; }
+.ask ol { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; counter-reset: pick; }
+.ask li { counter-increment: pick; display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; color: #d6dbe4; font-size: 0.98rem; line-height: 1.45; }
+.ask li::before { content: counter(pick); font-family: var(--display); font-weight: 700; color: var(--ink); background: #fff; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 0.85rem; margin-top: 1px; }
+.ask li strong { color: #fff; }
+
+.fig { background: var(--sheet); border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+
+/* the five checks */
+.checks { display: flex; flex-direction: column; }
+.check { display: grid; grid-template-columns: 84px minmax(0, 1.25fr) minmax(0, 1fr); column-gap: 22px; padding: 16px 0; border-top: 1px solid var(--line); align-items: start; }
+.check:first-child { border-top: 0; padding-top: 0; }
+.check:last-child { padding-bottom: 0; }
+.chip { font-family: var(--display); font-weight: 700; font-size: 0.95rem; color: #fff; border-radius: 8px; padding: 5px 0; text-align: center; background: var(--c); }
+.chip.amber { color: var(--ink); }
+.check .q { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.check .q b { font-family: var(--display); font-size: 1.14rem; font-weight: 700; line-height: 1.2; }
+.check .q span { font-size: 0.93rem; color: var(--ink-2); line-height: 1.45; }
+.check .q code { align-self: flex-start; margin-top: 3px; }
+.check .got { font-size: 0.93rem; color: var(--ink-2); line-height: 1.45; border-left: 3px solid var(--c); padding-left: 14px; min-width: 0; }
+.check .got b { display: block; color: var(--ink); font-weight: 600; font-size: 0.82rem; margin-bottom: 3px; }
+
+/* three names */
+.names { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.name { background: var(--sheet); border: 1px solid var(--line); border-top: 4px solid var(--c); border-radius: 0 0 14px 14px; padding: 18px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.name b { font-family: var(--mono); font-size: 1.02rem; font-weight: 500; color: var(--ink); word-break: break-all; }
+.name span { font-size: 0.93rem; color: var(--ink-2); line-height: 1.45; }
+.code { background: var(--ink); color: #dfe5ee; font-family: var(--mono); font-size: 0.8rem; line-height: 1.6; border-radius: 10px; padding: 14px 16px; overflow-x: auto; white-space: pre; margin: 0; }
+.code .dim { color: #8a96a8; } .code .ok { color: #58d39b; } .code .bad { color: #ff8f8a; } .code .hl { color: #ffd479; }
+
+/* four rules */
+.rules { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.rule { background: var(--sheet); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.rule h3 { font-size: 1.14rem; }
+.rule span { font-size: 0.93rem; color: var(--ink-2); line-height: 1.45; }
+.rule .without { border-left: 3px solid var(--miss); padding-left: 12px; color: var(--ink); }
+
+/* the loop and gate */
+.flow { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; }
+.step { border: 1px solid var(--line-2); border-radius: 10px; padding: 9px 13px; font-size: 0.9rem; font-weight: 500; background: var(--sheet); color: var(--ink); display: flex; flex-direction: column; gap: 2px; justify-content: center; min-width: 0; }
+.step small { font-family: var(--mono); font-size: 0.78rem; font-weight: 400; color: var(--ink-3); }
+.step.check-step { border-left: 4px solid var(--c); }
+.step.dark { background: var(--ink); border-color: var(--ink); color: #fff; }
+.step.dark small { color: #aeb8c8; }
+.gate { border: 1px dashed var(--line-2); border-radius: 12px; padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.gate > b { font-size: 0.86rem; font-weight: 600; color: var(--ink-2); }
+.gate > div { display: flex; flex-wrap: wrap; gap: 8px; }
+.arrow { align-self: center; color: var(--ink-3); font-size: 0.95rem; }
+.flow .br { flex-basis: 100%; height: 0; }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 22px; }
+.fact { border-top: 2px solid var(--ink); padding-top: 12px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.fact b { font-family: var(--display); font-size: 1.12rem; font-weight: 700; line-height: 1.2; }
+.fact span { color: var(--ink-2); font-size: 0.93rem; line-height: 1.4; }
+
+/* planted bugs */
+.plants { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.plant { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+.plant .head { padding: 10px 14px; font-family: var(--display); font-weight: 700; font-size: 1rem; display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.plant .head small { font-family: var(--mono); font-weight: 400; font-size: 0.74rem; color: inherit; opacity: 0.8; }
+.plant.caught .head { background: var(--ok-wash); color: var(--ok-ink); }
+.plant.missed .head { background: var(--miss-wash); color: #a32220; }
+.plant .code { border-radius: 0; }
+.plant p { padding: 12px 14px 14px; font-size: 0.93rem; line-height: 1.45; }
+.bars { display: grid; grid-template-columns: max-content minmax(0, 1fr) 46px; column-gap: 14px; row-gap: 10px; align-items: center; }
+.bars .lab { font-size: 0.92rem; color: var(--ink-2); line-height: 1.3; }
+.bars .lab b { color: var(--ink); font-weight: 600; display: block; }
+.track { position: relative; height: 22px; background: linear-gradient(var(--wash), var(--wash)) left center / 100% 2px no-repeat; }
+.track i { position: absolute; left: 0; top: 3px; height: 16px; border-radius: 0 4px 4px 0; background: var(--ink); }
+.track::after { content: ""; position: absolute; left: 90%; top: -5px; bottom: -5px; border-left: 2px dashed var(--ink-3); }
+.track[data-t] { cursor: default; outline: none; }
+.track[data-t]:focus-visible { outline: 2px solid var(--types); outline-offset: 2px; }
+.bars .val { font-family: var(--display); font-weight: 700; font-size: 1.05rem; font-variant-numeric: tabular-nums; text-align: right; }
+.bars .axis { position: relative; height: 18px; }
+.bars .axis span { position: absolute; left: 90%; transform: translateX(-50%); font-size: 0.78rem; color: var(--ink-3); white-space: nowrap; }
+#tip { position: fixed; z-index: 20; max-width: min(340px, calc(100vw - 24px)); background: var(--ink); color: #fff; padding: 10px 12px; border-radius: 10px; font-size: 0.82rem; line-height: 1.4; pointer-events: none; box-shadow: 0 8px 24px rgba(13, 20, 32, 0.25); }
+#tip b { display: block; font-weight: 600; margin-bottom: 3px; }
+
+/* one list */
+.twin { display: grid; grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1.25fr); gap: 12px; align-items: center; }
+.twin > div { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.twin > div b { font-size: 0.82rem; font-weight: 600; color: var(--ink-3); }
+.twin > div span { font-size: 0.98rem; color: var(--ink); line-height: 1.4; }
+.twin > div span.m { font-family: var(--mono); font-size: 0.84rem; line-height: 1.55; word-break: break-word; }
+.twin mark { background: #d9f3e7; color: var(--ok-ink); padding: 0.1em 0.35em; border-radius: 5px; font-family: var(--mono); font-size: 0.9em; }
+.twin .eq { border: 0; padding: 0; text-align: center; font-family: var(--display); font-weight: 700; font-size: 1.3rem; color: var(--ink-3); }
+
+/* adoption */
+.phases { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.phase { background: var(--sheet); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.phase b { font-family: var(--display); font-weight: 700; font-size: 1.02rem; line-height: 1.2; }
+.phase span { font-size: 0.9rem; color: var(--ink-2); line-height: 1.4; }
+.phase em { font-style: normal; font-size: 0.8rem; font-weight: 600; align-self: flex-start; margin-top: 4px; padding: 2px 9px; border-radius: 999px; background: var(--ok-wash); color: var(--ok-ink); font-variant-numeric: tabular-nums; }
+.phase.new { background: var(--ink); border-color: var(--ink); }
+.phase.new b { color: #fff; } .phase.new span { color: #d6dbe4; }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 3.2fr); gap: 10px; }
+.split .phases { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.limits { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 28px; }
+.limit { border-left: 3px solid var(--ink); padding: 2px 0 2px 14px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.limit span { font-size: 0.94rem; color: var(--ink-2); line-height: 1.45; }
+
+.links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.link { background: var(--sheet); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 8px; min-width: 0; text-decoration: none; }
+.link:hover, .link:focus-visible { border-color: var(--ink); outline: none; box-shadow: inset 0 0 0 1px var(--ink); }
+.link b { font-family: var(--display); font-size: 1.14rem; font-weight: 700; }
+.link span { font-size: 0.93rem; color: var(--ink-2); line-height: 1.45; }
+.link u { font-family: var(--mono); font-size: 0.8rem; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; word-break: break-all; }
+
+details { background: var(--sheet); border: 1px solid var(--line); border-radius: 12px; }
+summary { cursor: pointer; padding: 13px 18px; font-weight: 600; font-size: 0.95rem; list-style-position: inside; }
+summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+details > div { padding: 4px 18px 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+details h3 { font-family: var(--mono); font-weight: 500; font-size: 0.92rem; letter-spacing: 0; }
+
+@media (max-width: 820px) {
+  .wrap { gap: 56px; padding-block: 24px 72px; }
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ask { grid-template-columns: minmax(0, 1fr); gap: 18px; padding: 22px 20px; }
+  .names, .rules, .facts, .plants, .limits, .links, .split { grid-template-columns: minmax(0, 1fr); }
+  .phases, .split .phases { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fig { padding: 18px 16px; }
+  .check { grid-template-columns: minmax(0, 1fr); row-gap: 10px; }
+  .chip { justify-self: start; padding: 4px 14px; }
+  .code { font-size: 0.72rem; padding: 11px 12px; }
+  .flow { flex-direction: column; }
+  .flow .br { display: none; }
+  .flow > .arrow { font-size: 0; align-self: flex-start; margin-left: 18px; line-height: 1; }
+  .flow > .arrow::before { content: "↓"; font-size: 1rem; }
+  .bars { grid-template-columns: minmax(0, 1fr) 46px; row-gap: 4px; }
+  .bars .lab { grid-column: 1 / -1; margin-top: 8px; }
+  .bars .axis { grid-column: 1; }
+  .bars .skip { display: none; }
+  .twin { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+
+<div class="wrap">
+
+<section id="top" class="hero">
+  <h1>Five checks, one command, and a number for how far to trust them</h1>
+  <p class="lead">This is how a repo gets tested when agents write the code and nobody reads it line by line. The standard is public on your GitHub, every new project starts with it, and two repos run it today.</p>
+  <div class="tiles">
+    <div class="tile"><b>5</b><span>checks, each answering a question the others can't</span></div>
+    <div class="tile"><b>3</b><span>test file names, and nothing else counts as a test</span></div>
+    <div class="tile"><b>1</b><span>command, <code>gate</code>, runs them on a clean copy of the commit</span></div>
+    <div class="tile"><b>63–80<small>%</small></b><span>of planted bugs the tests had never seen are caught today</span></div>
+  </div>
+  <div class="ask">
+    <h3>One call for you</h3>
+    <ol>
+      <li><span><strong>Which existing repo comes onto it next?</strong> New projects get it from the starter. An existing one comes on only when you name it. My pick is Drydock, because every deploy you make rides on it.</span></li>
+    </ol>
+  </div>
+</section>
+
+<section id="checks">
+  <h2>Each check answers a question the others can't</h2>
+  <div class="fig">
+    <div class="checks">
+      <div class="check" style="--c: var(--types)">
+        <div class="chip">Types</div>
+        <div class="q"><b>Does the code agree with itself?</b><span>Strict TypeScript, never <code>any</code>, and zod wherever data crosses a boundary. Nothing runs, so it takes seconds.</span><code>bun run typecheck</code></div>
+        <div class="got"><b>A planted bug it caught</b>A deleted <code>undefined</code> guard. The compiler refused it before anything ran.</div>
+      </div>
+      <div class="check" style="--c: var(--rules)">
+        <div class="chip amber">Rules</div>
+        <div class="q"><b>Is the logic right where a wrong answer is silent?</b><span>Pure functions with many cases: money, dates, permissions, parsers, redirects. No database, no network.</span><code>*.rule.test.ts</code></div>
+        <div class="got"><b>A planted bug it caught</b>A reversed comparison in the safe-redirect check, which would have let a link send people off-site.</div>
+      </div>
+      <div class="check" style="--c: var(--api)">
+        <div class="chip">API</div>
+        <div class="q"><b>Does every server call return, write and refuse what it should?</b><span>Every tRPC procedure through the real router on a real Postgres, as a visitor, a signed-in person and an admin.</span><code>*.api.test.ts</code></div>
+        <div class="got"><b>A planted bug it caught</b>The admin check with its NOT removed: admins refused, everyone else let in. Before the standard, this exact bug passed every check.</div>
+      </div>
+      <div class="check" style="--c: var(--flows)">
+        <div class="chip">Flows</div>
+        <div class="q"><b>Can a person actually do it?</b><span>A person's path through the production build in a real browser, at desktop and phone width. Every screen gets walked.</span><code>*.flow.spec.ts</code></div>
+        <div class="got"><b>A planted bug it caught</b>A sign-in button that starts out stuck on loading. Only a browser on the real page sees that.</div>
+      </div>
+      <div class="check" style="--c: var(--live)">
+        <div class="chip">Live</div>
+        <div class="q"><b>Is what deployed the thing that was tested, and is it up?</b><span>After a deploy, the new revision is running and its health path and listed pages answer. It warns and never rolls back.</span><code>after a deploy</code></div>
+        <div class="got"><b>What it catches</b>The old build still live after a deploy, or a site that stopped answering.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="names">
+  <h2>Three file names, and nothing else counts as a test</h2>
+  <div class="names">
+    <div class="name" style="--c: var(--rules)"><b>*.rule.test.ts</b><span>May touch pure code only. It runs with no environment at all, so one that reaches for a database fails on import.</span></div>
+    <div class="name" style="--c: var(--api)"><b>*.api.test.ts</b><span>May touch the real router and its own copy of Postgres. Never the dev database, never a real API key.</span></div>
+    <div class="name" style="--c: var(--flows)"><b>*.flow.spec.ts</b><span>May touch the app only the way a person does: the production build, through a browser, at two widths.</span></div>
+  </div>
+  <p>The name says what a test is allowed to depend on. A names check runs first and fails on anything else. No other unit tests get written, and an old one is deleted the first time it blocks a change you asked for.</p>
+  <details>
+    <summary>One real test of each kind</summary>
+    <div>
+      <h3>access.rule.test.ts</h3>
+      <pre class="code">test(<span class="hl">'a whole domain, and only that domain'</span>, () =&gt; {
+  expect(emailMatches('anyone@acme.io', entries)).toBe(true)
+  expect(emailMatches('x@eng.acme.io', entries)).toBe(false)
+  expect(emailMatches('x@acme.io.evil.com', entries)).toBe(false)
+})</pre>
+      <h3>demo.api.test.ts</h3>
+      <pre class="code">test(<span class="hl">'rejects a signed-out caller and writes nothing'</span>, async () =&gt; {
+  const before = await prisma.post.count()
+  const anon = await asAnon()
+  await expect(anon.api.posts.create({ title: 'nope', content: 'nope' }))
+    .rejects.toMatchObject({ code: 'UNAUTHORIZED' })
+  expect(await prisma.post.count()).toBe(before)
+})</pre>
+      <h3>auth.flow.spec.ts</h3>
+      <pre class="code">test(<span class="hl">'auth/sign-in-next · signing in returns to the page and query asked for'</span>, async ({ page, world }) =&gt; {
+  <span class="dim">// Check: sign-in from /dashboard?tab=posts ends on /dashboard?tab=posts.</span>
+  const person = await world.account('Linus')
+  await page.goto('/dashboard?tab=posts')
+  await page.getByLabel('Email').fill(person.email)
+  await page.getByLabel('Password').fill(person.password)
+  await page.getByRole('button', { name: 'Sign in' }).click()
+  await expect(page.getByRole('heading', { level: 1, name: 'Linus' })).toBeVisible()
+})</pre>
+    </div>
+  </details>
+</section>
+
+<section id="rules">
+  <h2>Four rules keep a green run honest</h2>
+  <div class="rules">
+    <div class="rule"><h3>A check has to have been seen failing once</h3><span>Break the code on purpose and watch the check go red before trusting its green.</span><span class="without">Without it, half of 66 planted bugs passed every check.</span></div>
+    <div class="rule"><h3>The builder doesn't write its own pass mark</h3><span>What a flow must show is written down before the code. A separate agent turns that line into the test.</span><span class="without">Without it, the agent that wrote the bug writes the test that agrees with it.</span></div>
+    <div class="rule"><h3>A skipped test is a failed test</h3><span>No skip, no todo, no run that finds zero tests, no test that passes when a setting is missing.</span><span class="without">Without it, one repo had 88 of 438 test files skipping themselves.</span></div>
+    <div class="rule"><h3>Checks run on a clean copy, with their own database</h3><span>Never the working folder and never the dev database. A file nobody committed isn't in the copy.</span><span class="without">Without it, 32 test files in one app were writing to the dev database.</span></div>
+  </div>
+</section>
+
+<section id="gate">
+  <h2><code>gate</code> checks the commit, not the folder it was written in</h2>
+  <div class="fig">
+    <div class="flow">
+      <div class="step">Write the check<small>with the change</small></div><span class="arrow">→</span>
+      <div class="step">See it fail</div><span class="arrow">→</span>
+      <div class="step">Make it pass</div><span class="arrow">→</span>
+      <div class="step">Commit</div><span class="arrow">→</span><span class="br"></span>
+      <div class="gate"><b>gate: a clean copy of the commit, a fresh database</b><div>
+        <div class="step check-step" style="--c: var(--types)">types</div>
+        <div class="step check-step" style="--c: var(--rules)">rules</div>
+        <div class="step check-step" style="--c: var(--api)">api</div>
+        <div class="step check-step" style="--c: var(--flows)">flows</div>
+      </div></div><span class="arrow">→</span>
+      <div class="step dark">Push<small>goes through either way</small></div>
+    </div>
+    <pre class="code"><span class="dim">$ gate</span>
+gate  sal-starter  c9c25a3  report  clean copy · 1 database
+<span class="ok">pass</span>  setup    2.3s   1 database from the template cache
+<span class="ok">pass</span>  types    1.4s
+<span class="ok">pass</span>  rules    0.3s   53 tests
+<span class="ok">pass</span>  api      3.2s   32 tests
+<span class="ok">pass</span>  flows   18.0s   32 tests
+receipt written · report mode never blocks a push</pre>
+    <div class="facts">
+      <div class="fact"><b>It reports and never blocks</b><span>Nothing it finds stops a push or fails a deploy. An agent that pushes past red has to say so.</span></div>
+      <div class="fact"><b>It can't pass by accident</b><span>Uncommitted files stay behind, the database is new, and a skipped test fails the run.</span></div>
+      <div class="fact"><b>It leaves git alone</b><span>No hooks and no config. Agents ask it before a push, and it answers with one line.</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="probe">
+  <h2>Planted bugs put a number on green</h2>
+  <p>A green run only means something if the checks can fail. So <code>gate probe</code> changes one line at a time, runs every check, and counts how many changes get caught.</p>
+  <div class="fig">
+    <div class="plants">
+      <div class="plant caught">
+        <div class="head">Caught by API<small>server/trpc.ts:59</small></div>
+        <pre class="code"><span class="bad">- if (!ctx.isAdmin) {</span>
+<span class="ok">+ if (ctx.isAdmin) {</span></pre>
+        <p>The test "each builder lets in exactly its callers" went red. Nothing more to do.</p>
+      </div>
+      <div class="plant missed">
+        <div class="head">Missed<small>src/app/sign-up.tsx:26</small></div>
+        <pre class="code"><span class="bad">- setLoading(false)</span>
+<span class="ok">+ setLoading(true)</span></pre>
+        <p>Every check stayed green, and a failed sign-up would leave the button stuck. The fix is a flow that fails on this exact change.</p>
+      </div>
+    </div>
+    <h3>Caught, out of 40 planted bugs the tests had never seen</h3>
+    <div class="bars">
+      <span class="skip"></span><div class="axis"><span>90% passes</span></div><span class="skip"></span>
+      <div class="lab"><b>The starter</b></div><div class="track" tabindex="0" data-t="The starter: 32 of 40 caught" data-f="Types 15, rules 9, flows 6, API 2. 8 got through."><i style="width: 80%"></i></div><div class="val">80%</div>
+      <div class="lab"><b>A production app</b>first run</div><div class="track" tabindex="0" data-t="First run: 21 of 40 caught" data-f="API 10, types 5, rules 3, flows 3. 19 got through."><i style="width: 52.5%"></i></div><div class="val">53%</div>
+      <div class="lab">after fixing that run's misses</div><div class="track" tabindex="0" data-t="Second run: 23 of 40 caught" data-f="A new 40. 17 got through."><i style="width: 57.5%"></i></div><div class="val">57%</div>
+      <div class="lab">after fixing the second run's</div><div class="track" tabindex="0" data-t="Third run: 25 of 40 caught" data-f="A new 40. 15 got through, 3 of them in critical files."><i style="width: 62.5%"></i></div><div class="val">63%</div>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>Only new bugs measure</b><span>Replaying bugs you already wrote tests for always reaches 100%. Both repos do. That number says little.</span></div>
+      <div class="fact"><b>A miss is a work item</b><span>Each one names the file, the line and the change. The fix is a test that fails on it, never an exclusion.</span></div>
+      <div class="fact"><b>90% is the bar</b><span>With nothing missed in sign-in, permissions, money or anything that writes data. Neither repo is there yet.</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="list">
+  <h2>Your click-through list and the browser tests are one list</h2>
+  <div class="fig">
+    <div class="twin">
+      <div><b>On your list</b><span><mark>auth/sign-out</mark> Signing out lands home, and Back does not reopen the dashboard</span></div>
+      <div class="eq">=</div>
+      <div><b>The browser test's title</b><span class="m"><mark>auth/sign-out</mark> · signing out lands home, and Back does not reopen the dashboard</span></div>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>Your list gets shorter</b><span>A flow a machine passed at both widths, at that commit, folds out of your way.</span></div>
+      <div class="fact"><b>A machine pass is never you</b><span>It doesn't count as you having tested anything, and the first-look flows always stay yours.</span></div>
+      <div class="fact"><b>Some flows only a person can judge</b><span>Feel, motion, sound, a real device, a third-party screen. Those are marked manual and get no twin.</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="adopt">
+  <h2>A new project starts on it, and an existing one gets there in four steps</h2>
+  <div class="split">
+    <div class="phase new"><b>A new project</b><span>Forks the starter, which carries every piece already working.</span></div>
+    <div class="phases">
+      <div class="phase"><b>1. Own databases</b><span>The tests stop touching the dev database. The app doesn't change.</span><em>36% caught</em></div>
+      <div class="phase"><b>2. An API test per procedure</b><span>Three names, and who may call what kept in git.</span><em>64%</em></div>
+      <div class="phase"><b>3. A flow per screen</b><span>The production build, walked at desktop and phone width.</span><em>100% of known</em></div>
+      <div class="phase"><b>4. Plant new bugs</b><span>Write a test for each miss, then plant again.</span><em>53 → 63% of new</em></div>
+    </div>
+  </div>
+  <p>The percentages are from the first existing app brought on: 174 procedures, 1,071 API tests and 164 flow runs, with a full <code>gate</code> run in two and a half minutes.</p>
+</section>
+
+<section id="limits">
+  <h2>Green still doesn't mean no bugs</h2>
+  <div class="limits">
+    <div class="limit"><h3>One planted bug in three to five still gets through</h3><span>On code the tests weren't written against. The point is that the number is known and can be moved.</span></div>
+    <div class="limit"><h3>It can't judge taste</h3><span>Whether a screen feels right is your call, and those flows stay on your list.</span></div>
+    <div class="limit"><h3>Some things no check reaches</h3><span>A mobile build on a real device, a third-party dashboard, an email as it lands in an inbox.</span></div>
+    <div class="limit"><h3>Nothing is stopped</h3><span>A red run is reported and the push still goes through. Blocking exists and stays off until you turn it on.</span></div>
+  </div>
+</section>
+
+<section id="where">
+  <h2>The standard is public, in one repo</h2>
+  <div class="links">
+    <a class="link" href="https://github.com/dested/testing-standard"><b>The standard</b><span>The README is the standard. Beside it: how an existing repo gets on, real examples, and what was measured.</span><u>github.com/dested/testing-standard</u></a>
+    <a class="link" href="https://github.com/dested/destedtui/blob/master/skill/gate/SKILL.md"><b>The runner</b><span><code>gate</code> and <code>gate probe</code>, with every command and how to read a failure.</span><u>github.com/dested/destedtui</u></a>
+    <a class="link" href="https://github.com/dested/sal-starter"><b>The working example</b><span>The starter every new project forks, with each piece in place and passing.</span><u>github.com/dested/sal-starter</u></a>
+  </div>
+</section>
+
+</div>
+
+<div id="tip" hidden></div>
+<script>
+(function () {
+  var tip = document.getElementById('tip');
+  function show(el, x, y) {
+    tip.textContent = '';
+    var b = document.createElement('b'); b.textContent = el.dataset.t; tip.appendChild(b);
+    if (el.dataset.f) { var d = document.createElement('div'); d.textContent = el.dataset.f; tip.appendChild(d); }
+    tip.hidden = false;
+    var w = tip.offsetWidth, h = tip.offsetHeight;
+    var left = Math.min(Math.max(8, x + 14), window.innerWidth - w - 8);
+    var top = y + 18 + h > window.innerHeight ? y - h - 12 : y + 18;
+    tip.style.left = left + 'px'; tip.style.top = Math.max(8, top) + 'px';
+  }
+  document.querySelectorAll('[data-t]').forEach(function (el) {
+    el.addEventListener('mousemove', function (e) { show(el, e.clientX, e.clientY); });
+    el.addEventListener('mouseleave', function () { tip.hidden = true; });
+    el.addEventListener('focus', function () { var r = el.getBoundingClientRect(); show(el, r.left, r.bottom); });
+    el.addEventListener('blur', function () { tip.hidden = true; });
+    el.addEventListener('click', function (e) { var r = el.getBoundingClientRect(); show(el, r.left, r.bottom); e.stopPropagation(); });
+  });
+  document.addEventListener('click', function () { tip.hidden = true; });
+  window.addEventListener('scroll', function () { tip.hidden = true; }, { passive: true });
+})();
+</script>
