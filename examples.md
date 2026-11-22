@@ -2,6 +2,46 @@
 
 Real files from [sal-starter](https://github.com/dested/sal-starter), the reference implementation. Each is cut down to show the shape; the links go to the whole file.
 
+## Types: the sign-in guard in `trpc.ts`
+
+There is no test file. The compiler is the check, and the code is written so it can be one: a signed-in procedure is handed a session that can't be null, and an input is whatever its zod schema says it is.
+
+```ts
+export const protectedProcedure = t.procedure.meta({ access: 'user' }).use(({ ctx, next }) => {
+  if (!ctx.session) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' })
+  }
+  return next({ ctx: { ...ctx, session: ctx.session } })
+})
+```
+
+[`apps/web/server/trpc.ts`](https://github.com/dested/sal-starter/blob/main/apps/web/server/trpc.ts)
+
+```ts
+create: protectedProcedure
+  .input(
+    z.object({
+      title: z.string().min(1).max(200),
+      content: z.string().min(1).max(2000),
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    return prisma.post.create({
+      data: { ...input, authorId: ctx.session.user.id },
+    })
+  }),
+```
+
+[`apps/web/server/demo.ts`](https://github.com/dested/sal-starter/blob/main/apps/web/server/demo.ts)
+
+Take the `!` out of the guard, one of the 40 bugs the planted-bug run tried, and the typecheck names every procedure that assumed a session:
+
+```
+$ tsc --noEmit
+server/demo.ts(35,37): error TS18047: 'ctx.session' is possibly 'null'.
+server/router.ts(5,51): error TS18047: 'ctx.session' is possibly 'null'.
+```
+
 ## A rule: `access.rule.test.ts`
 
 Who may sign up. Pure, many cases, and silent when wrong: the kind of logic a rule is for.
@@ -110,6 +150,53 @@ A flow that provokes one on purpose allows exactly that one:
 
 ```ts
 problems.allow('response', /\/api\/auth\/get-session/)
+```
+
+## Live: `/healthz` reports the deployed commit
+
+The app's half is one field. The deploy tool sets `DRYDOCK_COMMIT` on an app whose live check is on, and the health route hands it back:
+
+```ts
+export function healthz(ping: () => Promise<unknown> = pingDatabase): RequestHandler {
+  return async (_req, res) => {
+    try {
+      await ping()
+      res.json({ status: 'ok', uptime: process.uptime(), commit: env.DRYDOCK_COMMIT ?? null })
+    } catch (e) {
+      log.error(`healthz db check failed: ${formatError(e)}`)
+      res.status(503).json({ status: 'error', error: 'database unreachable' })
+    }
+  }
+}
+```
+
+[`apps/web/server/health.ts`](https://github.com/dested/sal-starter/blob/main/apps/web/server/health.ts)
+
+A flow holds the route to it, on the production build:
+
+```ts
+import { expect, test } from './flow'
+import { FLOW_COMMIT } from './server'
+
+test('health/commit · /healthz reports the commit the server was deployed as', async ({
+  request,
+}) => {
+  // Check: the body holds `"commit":"<DRYDOCK_COMMIT>"`, the text Drydock's Live check looks for.
+  const res = await request.get('/healthz')
+  expect(res.status()).toBe(200)
+  expect(await res.text()).toContain(`"commit":"${FLOW_COMMIT}"`)
+})
+```
+
+[`apps/web/e2e/health.flow.spec.ts`](https://github.com/dested/sal-starter/blob/main/apps/web/e2e/health.flow.spec.ts)
+
+The check's half is a few lines in the app's deploy manifest, written by the deploy tool when the check is turned on. `{sha}` stands for the commit that was just deployed, so an old version still serving is reported:
+
+```yaml
+liveCheck:        # after each deploy: report whether the new commit serves (never fails it)
+  paths:
+    - path: "/healthz"
+      contains: "\"commit\":\"{sha}\""
 ```
 
 ## `gate.json`

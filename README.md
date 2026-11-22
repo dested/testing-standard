@@ -116,9 +116,13 @@ The result is a **catch rate**: caught ÷ (caught + missed). The run passes at 9
 
 `strict: true` in every tsconfig, and never `any`: not in generics, casts or catch blocks. `unknown` with narrowing, real generics and discriminated unions instead. zod parses anything that crosses a boundary. No `as` to paper over a mismatch, no `@ts-ignore` without a written reason. On the starter, types caught more planted bugs than any other check (15 of the 32 caught), and it costs seconds.
 
+The code: [the sign-in guard, and what the compiler says when it is broken](examples.md#types-the-sign-in-guard-in-trpcts).
+
 ### Rules
 
 A `*.rule.test.ts` sits next to the pure function it covers and imports nothing that reads `process.env`, opens a socket or touches a database. The rules run with an empty environment, so one that cheats fails on import. Good candidates: who may sign up, which redirect is safe, how money rounds, where a date lands across a timezone, what a parser does with bad input.
+
+The code: [a rule test](examples.md#a-rule-accessruletestts).
 
 ### API
 
@@ -128,6 +132,8 @@ A `*.rule.test.ts` sits next to the pure function it covers and imports nothing 
 - **Its own environment.** The API tests never load the repo's `.env`. They remove every key it defines and set exactly what the server needs, so no test can reach a paid service with a real key.
 - **Who may call what, in git.** Every procedure builder carries a tag for who it lets in. A script writes the table of every procedure against every kind of caller to a committed file, and a test fails when the table and the router disagree. A permission change then shows up in review as a one-line diff, and the commit says what changed and why.
 
+The code: [an API test](examples.md#an-api-test-demoapitestts) and [the table of who may call what](examples.md#who-may-call-what-routeraccessmd).
+
 ### Flows
 
 - **The production build.** Each Playwright worker starts the built app on a free port against its own clone of the test database.
@@ -136,9 +142,13 @@ A `*.rule.test.ts` sits next to the pure function it covers and imports nothing 
 - **Problems fail the flow without being asked.** An uncaught page error, a `console.error`, a response of 500 or more, a failed same-origin request, or sideways overflow on the page the flow ended on. A flow that provokes one on purpose allows exactly that one, by pattern.
 - **Titles a person can read.** `<feature>/<flow> · <what a person sees>`, such as `auth/sign-out · signing out lands home, and Back does not reopen the dashboard`. The body starts with a `// Check:` line naming the one thing to see.
 
+The code: [a flow](examples.md#a-flow-authflowspects).
+
 ### Live
 
 After a deploy, the deploy tool checks that the new revision is running and that the health path and a short list of paths answer. A path can be required to report the new commit, which proves that what is live is what was tested. It is opt-in per app. It warns, and it never fails or rolls back a deploy: a check that can take production down is worse than the bug it might catch.
+
+The code: [the health route that reports the commit, and the check's config](examples.md#live-healthz-reports-the-deployed-commit).
 
 ## One list for the person and the machine
 

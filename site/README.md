@@ -16,6 +16,8 @@ bun run typecheck
 | `layout.ts` | The shell every page shares: head, top bar, footer |
 | `landing.ts` | The home page |
 | `docs.ts` | The markdown pages. `DOCS` maps each file to its address |
+| `examples.ts` | Pulls code blocks out of `examples.md` by heading, for the home page |
+| `code.ts` | One code block as HTML: highlighted when it names a language, a dark terminal when it doesn't |
 | `client.ts` | The browser script: the planted-bug board and the adoption picker |
 | `styles.css` | Every style. One light theme, tokens at the top |
 | `data/planted-bugs.json` | The 40 planted bugs on the home page: one recorded `gate probe` run on the starter |
@@ -24,6 +26,7 @@ bun run typecheck
 
 ## Things to know
 
+- **The home page's code is `examples.md`'s code.** Each check in `CHECKS` (`landing.ts`) names a heading in `examples.md` and how many of its code blocks to show. The file label is the first link in the line under a block; a block with no link under it shows the sentence above it. The build fails if a heading or a block is missing, so the two pages can't drift.
 - **A new markdown page** is one entry in `DOCS` in `docs.ts`, and one in `KNOWN` in `layout.ts`.
 - **Addresses end in a slash** (`/adopt/`). The deployed server answers an unknown path with the home page, so the home page sends `/adopt` on to `/adopt/`.
 - **Links between the markdown files stay as GitHub reads them** (`adopt.md#a-new-project`). The site rewrites them.

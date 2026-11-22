@@ -3,7 +3,7 @@
 
 import { join } from 'node:path'
 import { Marked, type Token, type Tokens } from 'marked'
-import { codeToHtml } from 'shiki'
+import { codeBlock } from './code'
 import { esc, slug } from './html'
 import type { NavKey } from './layout'
 
@@ -43,7 +43,6 @@ export const DOCS: Doc[] = [
 ]
 
 const ROOT = join(import.meta.dir, '..')
-const LANGS: Record<string, string> = { ts: 'typescript', tsx: 'tsx', json: 'json', bash: 'bash', sh: 'bash', md: 'markdown' }
 
 function isCode(token: Token): token is Tokens.Code {
   return token.type === 'code' && 'text' in token && typeof token.text === 'string'
@@ -73,17 +72,11 @@ export async function renderDoc(doc: Doc): Promise<Rendered> {
     gfm: true,
     async walkTokens(token) {
       if (!isCode(token)) return
-      const lang = LANGS[token.lang ?? '']
-      highlighted.set(
-        token,
-        lang
-          ? await codeToHtml(token.text, { lang, theme: 'github-light' })
-          : `<pre class="term">${esc(token.text)}</pre>`,
-      )
+      highlighted.set(token, await codeBlock(token.text, token.lang))
     },
     renderer: {
       code(token) {
-        return highlighted.get(token) ?? `<pre class="term">${esc(token.text)}</pre>`
+        return highlighted.get(token) ?? `<pre class="term">${esc(token.text)}</pre>\n`
       },
       heading(token) {
         const inner = this.parser.parseInline(token.tokens)

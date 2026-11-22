@@ -8,6 +8,7 @@ Nothing about the checks, the names or the rules changed.
 - A scale for where a repo stands: not on it, safe to run, named, walked, measured, at the bar. Each has a test for whether it is done.
 - `gate tests` lists every test in a repo and how it last ran.
 - The standard is a site: [testing.dested.com](https://testing.dested.com).
+- The examples show the code for all five checks, Types and Live included. The starter's health route now reports the deployed commit.
 
 ## 1.0 · 2026-11-21
 

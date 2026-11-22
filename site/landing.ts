@@ -4,6 +4,8 @@
 
 import { join } from 'node:path'
 import { z } from 'zod'
+import { codeBlock, terminal } from './code'
+import { examples, type Sample } from './examples'
 import { esc, inline } from './html'
 import { MARK } from './layout'
 
@@ -36,13 +38,24 @@ export type PlantedBug = z.infer<typeof bugSchema>
 const ORDER: Array<Check | null> = ['types', 'rules', 'api', 'flows', null]
 const NAME: Record<Check, string> = { types: 'Types', rules: 'Rules', api: 'API', flows: 'Flows' }
 
-const CHECKS: Array<{ key: Check | 'live'; name: string; question: string; what: string; where: string }> = [
+type CheckRow = {
+  key: Check | 'live'
+  name: string
+  question: string
+  what: string
+  where: string
+  /** The code this check shows: a heading in examples.md and how many of its blocks. */
+  code: Array<[heading: string, take: number]>
+}
+
+const CHECKS: CheckRow[] = [
   {
     key: 'types',
     name: 'Types',
     question: 'Does the code agree with itself?',
     what: 'Strict TypeScript with no `any`, and zod at every boundary: API input, env, forms, storage.',
     where: 'bun run typecheck',
+    code: [['Types:', 3]],
   },
   {
     key: 'rules',
@@ -50,6 +63,7 @@ const CHECKS: Array<{ key: Check | 'live'; name: string; question: string; what:
     question: 'Is the logic right where a wrong answer is silent?',
     what: 'Pure functions with many cases: money, dates, permissions, parsers, redirects. No database, network or environment.',
     where: '*.rule.test.ts',
+    code: [['A rule:', 1]],
   },
   {
     key: 'api',
@@ -57,6 +71,7 @@ const CHECKS: Array<{ key: Check | 'live'; name: string; question: string; what:
     question: 'Does every server procedure return, write and refuse what it should, for each kind of caller?',
     what: 'Every tRPC procedure called through the real router on a real Postgres, plus a committed table of who may call what.',
     where: '*.api.test.ts',
+    code: [['An API test:', 1], ['Who may call what:', 1]],
   },
   {
     key: 'flows',
@@ -64,6 +79,7 @@ const CHECKS: Array<{ key: Check | 'live'; name: string; question: string; what:
     question: 'Can a person actually do it?',
     what: 'A person’s path through the production build in a real browser, at desktop and phone width, with every screen walked by some flow.',
     where: '*.flow.spec.ts',
+    code: [['A flow:', 1]],
   },
   {
     key: 'live',
@@ -71,6 +87,7 @@ const CHECKS: Array<{ key: Check | 'live'; name: string; question: string; what:
     question: 'Is what deployed the thing that was tested, and is it up?',
     what: 'After a deploy: the new revision is running, and the health path and listed paths answer. It warns and never rolls back.',
     where: 'after a deploy',
+    code: [['Live:', 3]],
   },
 ]
 
@@ -175,21 +192,6 @@ const LIMITS: string[] = [
   '<b>It does not cover what no check reaches:</b> mobile builds on real devices, third-party dashboards, and email as it lands in an inbox.',
 ]
 
-/** Colour the fixed vocabulary of gate's output; everything else is plain. */
-function terminal(command: string, output: string): string {
-  const lines = output
-    .trimEnd()
-    .split('\n')
-    .map((line) => {
-      const safe = esc(line)
-      if (/^\s*(pass|caught)\b/.test(line)) return safe.replace(/^(\s*)(pass|caught)/, '$1<span class="ok">$2</span>')
-      if (/^\s*(FAIL|MISSED|FAILED)\b/.test(line)) return safe.replace(/^(\s*)(FAIL|MISSED|FAILED)/, '$1<span class="bad">$2</span>')
-      return safe.replace(/✓/g, '<span class="ok">✓</span>').replace(/✗/g, '<span class="bad">✗</span>')
-    })
-    .join('\n')
-  return `<pre class="term" tabindex="0"><span class="p">$ </span><span class="c">${esc(command)}</span>\n${lines}</pre>`
-}
-
 async function text(name: string): Promise<string | null> {
   const file = Bun.file(join(import.meta.dir, 'data', name))
   return (await file.exists()) ? await file.text() : null
@@ -236,15 +238,31 @@ export async function landing(): Promise<string> {
     `<li><i class="sw none"></i>Got through <b>${run.missed}</b></li>`,
   ].join('')
 
-  const checks = CHECKS.map((c) => {
-    const caught = c.key === 'live' ? null : (run.byCheck[c.key] ?? 0)
-    return `<li class="check" style="--c: var(--${c.key})">
+  const pick = await examples()
+  const figure = async (sample: Sample | undefined): Promise<string> => {
+    if (!sample) return ''
+    const block = await codeBlock(sample.code, sample.lang)
+    if (sample.file) return `<figure class="code"><figcaption><a href="${esc(sample.file.href)}" rel="noopener">${esc(sample.file.path)}</a></figcaption>${block}</figure>`
+    return `<figure class="code out">${sample.lead ? `<figcaption>${sample.lead}</figcaption>` : ''}${block}</figure>`
+  }
+  const checks = (
+    await Promise.all(
+      CHECKS.map(async (c) => {
+        const caught = c.key === 'live' ? null : (run.byCheck[c.key] ?? 0)
+        const samples = c.code.flatMap(([heading, take]) => pick(heading, take))
+        const figures = (await Promise.all(samples.map(figure))).join('\n')
+        return `<li class="check" id="check-${c.key}" style="--c: var(--${c.key})">
+<div class="check-say">
 <div class="check-name"><i class="sw ${c.key}"></i>${c.name}</div>
-<div class="check-q">${esc(c.question)}</div>
-<div class="check-what">${inline(c.what)}</div>
+<h3 class="check-q">${esc(c.question)}</h3>
+<p class="check-what">${inline(c.what)}</p>
 <div class="check-where"><code>${esc(c.where)}</code>${caught === null ? '' : `<span><b>${caught}</b> of the ${run.max} planted bugs</span>`}</div>
+</div>
+<div class="check-code">${figures}</div>
 </li>`
-  }).join('\n')
+      }),
+    )
+  ).join('\n')
 
   const rules = RULES.map(
     (r) => `<div class="rule"><h3>${esc(r.rule)}</h3><p>${inline(r.how)}</p><p class="without">${esc(r.without)}</p></div>`,
@@ -315,7 +333,8 @@ ${steps([
   { do: 'It writes a signed receipt', note: 'for the commit on a full pass.' },
 ])}
 <div class="terms">
-${gateOut ? terminal('gate', gateOut) : ''}
+${gateOut ? terminal(gateOut, 'gate') : ''}
+${await figure(pick('`gate.json`', 1)[0])}
 </div>
 </div>
 <div class="sheet facts">
@@ -329,7 +348,7 @@ ${
   testsOut
     ? `<section class="section" id="tests"><div class="wrap">
 <h2>One more shows every test and how it last ran</h2>
-${terminal('gate tests', testsOut)}
+${terminal(testsOut, 'gate tests')}
 <div class="sheet facts">
 <div><b>It runs nothing</b>It reads the runs <code>gate</code> already kept: each test’s last result, how long it took, and whether it has failed before.</div>
 <div><b>It names the idle tests</b>Each test file shows how many planted bugs it has caught, and a file that exists but never ran is listed.</div>
