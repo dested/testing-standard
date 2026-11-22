@@ -1,0 +1,7 @@
+gate  sal-starter  c9c25a3  report  clean copy · 1 database
+pass  setup    2.3s   1 database from the template cache
+pass  types    1.4s
+pass  rules    0.3s   53 tests
+pass  api      3.2s   32 tests
+pass  flows   18.0s   32 tests
+receipt written · report mode never blocks a push

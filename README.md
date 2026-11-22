@@ -1,6 +1,8 @@
 # Testing standard
 
-Version 1.0 · 2026-11-21
+Version 1.1 · 2026-11-21
+
+Read it as a site at [testing.dested.com](https://testing.dested.com).
 
 One way to test a web app that agents build and nobody reads line by line.
 
@@ -8,8 +10,8 @@ When an agent writes the code and the tests, a green run proves little on its ow
 
 It is written for TypeScript apps on React, tRPC, Postgres and Prisma, run with Bun and Playwright. The ideas carry to other stacks; the file names and commands here are for this one.
 
-- [`adopt.md`](adopt.md): bringing an existing repo onto the standard
-- [`examples.md`](examples.md): one real example of each test, the access table, `gate.json` and the output
+- [`adopt.md`](adopt.md): the adoption plan for a new project, an existing app, an older fork and something that isn't a web app
+- [`examples.md`](examples.md): one real example of each test, the access table, `gate.json` and what each command prints
 - [`evidence.md`](evidence.md): what was measured before and after
 - [`CHANGELOG.md`](CHANGELOG.md): what changed between versions
 
@@ -72,6 +74,7 @@ gate                 every check on HEAD; a receipt on a pass
 gate --dirty         HEAD plus uncommitted files, for a quick look (no receipt)
 gate --only api      one check (no receipt)
 gate status          the mode, the receipt for HEAD, the last runs, the newest planted-bug run
+gate tests           every test in the repo and how it last ran
 gate init            write gate.json from the repo's scripts
 gate doctor          what is broken in gate itself, each with its fix
 ```
@@ -154,6 +157,10 @@ The owner keeps a short click-through list for each app: the flows a person woul
 
 ## Starting
 
+[`adopt.md`](adopt.md) is the adoption plan. It has one path per kind of repo, and a scale for where a repo stands.
+
 - **A new project** starts from [sal-starter](https://github.com/dested/sal-starter), which carries all of it: the three names, the test databases, the flow fixture, the every-screen check, the access table and a `gate.json`.
-- **An existing repo** follows [`adopt.md`](adopt.md), four steps in a fixed order.
+- **An existing app** takes four steps in a fixed order: its own test databases, the names and an API test for every procedure, flows on every screen, then planted bugs.
+- **An older fork of the starter** gets it through the starter's sync.
+- **Something that isn't a web app** keeps the checks whose question still applies.
 - **The runner** is `gate`, part of [destedtui](https://github.com/dested/destedtui): clone it, `bun install`, `bun link`. It runs on Linux and WSL, and needs a local Postgres for a repo with a database.

@@ -205,3 +205,74 @@ catch rate 80%
 ```
 
 A `caught` line names the check and the test that went red. A `MISSED` line shows the exact change that got through: here, a rate-limit window nobody tests and a sign-up button that would stay stuck on loading. The fix for each is a test that fails on that change.
+
+## What `gate tests` prints
+
+Every test the repo has and how it last ran, read from the runs `gate` kept. It runs nothing. This is the starter:
+
+```
+gate tests  sal-starter  c9c25a3
+last run   2026-11-21 16:00 · c9c25a3 · pass · HEAD has a receipt
+probe      2026-11-21 · 6aa609c · caught 80% · 8 missed
+
+types   no tests              pass                                 1.4s
+rules   53 tests              53 pass                              0.3s
+api     32 tests              32 pass                              3.2s
+flows   16 flows at 2 widths  32 pass                             18.0s
+
+rules
+  ✓   4  apps/mobile/src/lib/ota-hold.rule.test.ts         caught none
+  ✓   5  apps/mobile/src/lib/resolve-api-url.rule.test.ts  caught none
+  ✓   5  apps/web/e2e/screens.rule.test.ts                 caught none
+  ✓   8  apps/web/server/access.rule.test.ts               caught 5 planted bugs
+  ✓   3  apps/web/server/asset-path.rule.test.ts           caught 4 planted bugs
+  ✓   1  apps/web/server/demo.rule.test.ts                 caught none
+  ✓   3  apps/web/server/env-schema.rule.test.ts           caught none
+  ✓   5  apps/web/src/lib/loader.rule.test.ts              caught 6 planted bugs
+  ✓   3  apps/web/src/lib/ssr-state.rule.test.ts           caught none
+  ✓   4  apps/web/test/db.rule.test.ts                     caught none
+  ✓   6  packages/brand/brand.rule.test.ts                 caught none
+  ✓   6  packages/tokens/tokens.rule.test.ts               caught none
+
+api
+  ✓   4  apps/desktop/src/main/router.api.test.ts  caught none
+  ✓   6  apps/web/server/demo.api.test.ts          caught 1 planted bug
+  ✓   1  apps/web/server/prisma.api.test.ts        caught 1 planted bug
+  ✓   3  apps/web/server/router.api.test.ts        caught 1 planted bug
+  ✓   6  apps/web/server/trpc.api.test.ts          caught 5 planted bugs
+  ✓   3  apps/web/test/procedures.api.test.ts      caught none
+  ✓   9  packages/trpc-ipc/src/ipc.api.test.ts     caught none
+
+flows                                                                               desktop    phone
+  ✓  10  apps/web/e2e/auth.flow.spec.ts  caught 11 planted bugs
+    auth/sign-up · an 8-character password signs a new person up onto their dashb…  ✓  1.2s  ✓  1.1s
+    auth/sign-up-short-password · a 7-character password is refused in the form     ✓  0.7s  ✓  0.8s
+    auth/sign-up-next · signing up from a protected page lands back on it           ✓  1.0s  ✓  1.2s
+    auth/protected-redirect · a signed-out visit to the dashboard asks to sign in…  ✓  0.6s  ✓  0.6s
+    auth/sign-in-next · signing in returns to the page and query asked for          ✓  1.4s  ✓  1.1s
+    auth/off-site-next · an off-site ?next= is ignored                              ✓  1.2s  ✓  0.9s
+    auth/sign-out · signing out lands home, and Back does not reopen the dashboard  ✓  0.8s  ✓  1.1s
+    auth/dashboard-ssr · a hard load of the dashboard hands React Query a real Da…  ✓  0.8s  ✓  0.7s
+    auth/session-check-retry · one failed session check on a navigation still loa…  ✓  1.9s  ✓  2.0s
+    auth/session-check-error · a session check that keeps failing shows the error…  ✓  2.0s  ✓  2.0s
+  ✓   2  apps/web/e2e/demo.flow.spec.ts  caught 3 planted bugs
+    demo/posts-create · a new post shows in the list, before and after a reload     ✓  0.8s  ✓  0.9s
+    on an empty database › demo/posts-empty · "No posts yet" until the first post…  ✓  3.4s  ✓  3.3s
+  ✓   4  apps/web/e2e/shell.flow.spec.ts  caught 2 planted bugs
+    shell/home · the home page shows the product name                               ✓  0.5s  ✓  0.5s
+    shell/not-found · an unknown page shows the 404 screen with a 404 status        ✓  0.6s  ✓  0.6s
+    shell/not-found-asset · an asset-looking path 404s without the app              ✓  0.1s  ✓  0.2s
+    shell/dashboard · the nav link opens the dashboard                              ✓  0.7s  ✓  0.7s
+
+not run yet
+  ·  recipes/ai/files/apps/web/server/ai/claude.api.test.ts
+  ·  recipes/jobs/files/apps/web/server/jobs.api.test.ts
+  ·  recipes/ws/files/apps/web/server/trpc-ws.api.test.ts
+
+caught none: a file can be idle because no bug landed near it
+history over the 13 kept runs · every test: gate tests --all · agents: --json
+```
+
+Each flow shows both widths side by side. `caught none` next to a file means no stored planted-bug run has gone red in it yet, which can be because no bug landed near it. `not run yet` lists test files that exist at the commit and have no recorded result: here, three files in optional add-ons that no workspace runs.
+
+`gate tests --failed` keeps only what is not a clean pass, `--all` lists every test by name, and `--json` prints everything for an agent. It exits 0 even when the last run was red: `gate` judges, `gate tests` reports.

@@ -1,0 +1,417 @@
+{
+ "repo": "sal-starter",
+ "sha": "6aa609c",
+ "at": "2026-11-21",
+ "seed": 1,
+ "max": 40,
+ "caught": 32,
+ "missed": 8,
+ "byCheck": {
+  "rules": 9,
+  "api": 2,
+  "types": 15,
+  "flows": 6
+ },
+ "bugs": [
+  {
+   "file": "apps/web/src/lib/loader.ts",
+   "line": 57,
+   "op": "flip-rel",
+   "before": "for (let i = 0; i < p.length; i++) {",
+   "after": "for (let i = 0; i >= p.length; i++) {",
+   "check": "rules",
+   "test": "safeNext > another host, a scheme or a relative path never does",
+   "testFile": "src/lib/loader.rule.test.ts"
+  },
+  {
+   "file": "apps/web/server/trpc.ts",
+   "line": 59,
+   "op": "drop-not",
+   "before": "if (!ctx.isAdmin) {",
+   "after": "if (ctx.isAdmin) {",
+   "check": "api",
+   "test": "procedure builders > each builder lets in exactly its callers, with the right error for the rest",
+   "testFile": "server/trpc.api.test.ts"
+  },
+  {
+   "file": "apps/web/src/lib/loader.ts",
+   "line": 59,
+   "op": "flip-logic",
+   "before": "if (c < 0x20 || c === 0x7f) return false",
+   "after": "if (c < 0x20 && c === 0x7f) return false",
+   "check": "rules",
+   "test": "safeNext > another host, a scheme or a relative path never does",
+   "testFile": "src/lib/loader.rule.test.ts"
+  },
+  {
+   "file": "apps/web/src/entry-server.tsx",
+   "line": 50,
+   "op": "drop-guard",
+   "before": "if (routerContext instanceof Response) throw routerContext",
+   "after": "void 0",
+   "check": "types",
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/server/asset-path.ts",
+   "line": 20,
+   "op": "flip-bool",
+   "before": "if (dot === -1) return false",
+   "after": "if (dot === -1) return true",
+   "check": "rules",
+   "test": "isAssetPath > page paths render, dotted ones included",
+   "testFile": "server/asset-path.rule.test.ts"
+  },
+  {
+   "file": "apps/web/src/lib/router-context.ts",
+   "line": 43,
+   "op": "off-by-one",
+   "before": "for (let attempt = 1; ; attempt++) {",
+   "after": "for (let attempt = 2; ; attempt++) {",
+   "check": "flows",
+   "test": "[desktop] \u203a e2e/auth.flow.spec.ts:128:1 \u203a auth/session-check-retry \u00b7 one failed session check on a navigation still loads the page",
+   "testFile": "e2e/auth.flow.spec.ts"
+  },
+  {
+   "file": "apps/web/src/lib/loader.ts",
+   "line": 20,
+   "op": "flip-arith",
+   "before": "const here = url.pathname + url.search",
+   "after": "const here = url.pathname - url.search",
+   "check": "types",
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/server/env.ts",
+   "line": 27,
+   "op": "drop-call",
+   "before": ".string()",
+   "after": "void 0",
+   "check": "types",
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/server/access.ts",
+   "line": 26,
+   "op": "flip-eq",
+   "before": "if (typeof email !== 'string') return false",
+   "after": "if (typeof email === 'string') return false",
+   "check": "types",
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/server/access.ts",
+   "line": 19,
+   "op": "flip-rel",
+   "before": "if (at <= 0) return false",
+   "after": "if (at > 0) return false",
+   "check": "rules",
+   "test": "emailMatches > an exact address, case and whitespace aside",
+   "testFile": "server/access.rule.test.ts"
+  },
+  {
+   "file": "apps/web/server.ts",
+   "line": 100,
+   "op": "drop-not",
+   "before": "if (!navigational || isAssetPath(req.path)) {",
+   "after": "if (navigational || isAssetPath(req.path)) {",
+   "check": "flows",
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/server.ts",
+   "line": 137,
+   "op": "flip-logic",
+   "before": "if (!isProd && vite && e instanceof Error) vite.ssrFixStacktrace(e)",
+   "after": "if (!isProd || vite && e instanceof Error) vite.ssrFixStacktrace(e)",
+   "check": "types",
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/server/trpc.ts",
+   "line": 21,
+   "op": "drop-guard",
+   "before": "if (value === undefined) continue",
+   "after": "void 0",
+   "check": "types",
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/src/app/sign-in.tsx",
+   "line": 18,
+   "op": "flip-bool",
+   "before": "const [loading, setLoading] = useState(false)",
+   "after": "const [loading, setLoading] = useState(true)",
+   "check": "flows",
+   "test": "[desktop] \u203a e2e/auth.flow.spec.ts:63:1 \u203a auth/sign-in-next \u00b7 signing in returns to the page and query asked for",
+   "testFile": "e2e/auth.flow.spec.ts"
+  },
+  {
+   "file": "apps/web/server.ts",
+   "line": 160,
+   "op": "off-by-one",
+   "before": "process.exit(1)",
+   "after": "process.exit(2)",
+   "check": null,
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/server/asset-path.ts",
+   "line": 21,
+   "op": "flip-arith",
+   "before": "return ASSET_EXTENSIONS.has(last.slice(dot + 1).toLowerCase())",
+   "after": "return ASSET_EXTENSIONS.has(last.slice(dot - 1).toLowerCase())",
+   "check": "rules",
+   "test": "isAssetPath > asset misses 404 before SSR",
+   "testFile": "server/asset-path.rule.test.ts"
+  },
+  {
+   "file": "apps/web/server.ts",
+   "line": 67,
+   "op": "drop-call",
+   "before": "await import('vite')",
+   "after": "void 0",
+   "check": "types",
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/src/lib/loader.ts",
+   "line": 21,
+   "op": "flip-eq",
+   "before": "return here === '/' ? '/sign-in' : `/sign-in?next=${encodeURIComponent(here)}`",
+   "after": "return here !== '/' ? '/sign-in' : `/sign-in?next=${encodeURIComponent(here)}`",
+   "check": "rules",
+   "test": "signInPath > carries the current path and search",
+   "testFile": "src/lib/loader.rule.test.ts"
+  },
+  {
+   "file": "apps/web/src/entry-server.tsx",
+   "line": 91,
+   "op": "drop-not",
+   "before": "if (!values) continue",
+   "after": "if (values) continue",
+   "check": "types",
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/server/access.ts",
+   "line": 39,
+   "op": "flip-logic",
+   "before": "return emailMatches(email, rules.allowlist) || isAdminEmail(email, rules.admins)",
+   "after": "return emailMatches(email, rules.allowlist) && isAdminEmail(email, rules.admins)",
+   "check": "rules",
+   "test": "signUpAllowed > a set allowlist admits its entries and the admins",
+   "testFile": "server/access.rule.test.ts"
+  },
+  {
+   "file": "apps/web/src/lib/loader.ts",
+   "line": 56,
+   "op": "drop-guard",
+   "before": "if (!p.startsWith('/') || p[1] === '/' || p[1] === '\\\\') return false",
+   "after": "void 0",
+   "check": "rules",
+   "test": "safeNext > another host, a scheme or a relative path never does",
+   "testFile": "src/lib/loader.rule.test.ts"
+  },
+  {
+   "file": "apps/web/server.ts",
+   "line": 78,
+   "op": "flip-bool",
+   "before": "index: false,",
+   "after": "index: true,",
+   "check": "flows",
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/server/auth.ts",
+   "line": 50,
+   "op": "off-by-one",
+   "before": "window: 10,",
+   "after": "window: 11,",
+   "check": null,
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/src/app/sign-in.tsx",
+   "line": 25,
+   "op": "drop-call",
+   "before": "setLoading(false)",
+   "after": "void 0",
+   "check": null,
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/server.ts",
+   "line": 17,
+   "op": "flip-eq",
+   "before": "const isProd = process.env.NODE_ENV === 'production'",
+   "after": "const isProd = process.env.NODE_ENV !== 'production'",
+   "check": null,
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/server/trpc.ts",
+   "line": 51,
+   "op": "drop-not",
+   "before": "if (!ctx.session) {",
+   "after": "if (ctx.session) {",
+   "check": "types",
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/src/lib/ssr-state.ts",
+   "line": 24,
+   "op": "flip-logic",
+   "before": "return typeof value === 'object' && value !== null && 'json' in value",
+   "after": "return typeof value === 'object' || value !== null && 'json' in value",
+   "check": "types",
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/server/access.ts",
+   "line": 38,
+   "op": "drop-guard",
+   "before": "if (rules.allowlist.length === 0) return true",
+   "after": "void 0",
+   "check": "rules",
+   "test": "signUpAllowed > a blank allowlist is open",
+   "testFile": "server/access.rule.test.ts"
+  },
+  {
+   "file": "apps/web/server/procedure-access.ts",
+   "line": 9,
+   "op": "flip-bool",
+   "before": "admin: { 'signed out': false, 'signed in': false, admin: true },",
+   "after": "admin: { 'signed out': false, 'signed in': false, admin: false },",
+   "check": "api",
+   "test": "procedure builders > each builder carries the tag whose ACCESS row matches what it does",
+   "testFile": "server/trpc.api.test.ts"
+  },
+  {
+   "file": "apps/web/src/lib/router-context.ts",
+   "line": 46,
+   "op": "off-by-one",
+   "before": "if (attempt === 2) {",
+   "after": "if (attempt === 3) {",
+   "check": "flows",
+   "test": "[desktop] \u203a e2e/auth.flow.spec.ts:149:1 \u203a auth/session-check-error \u00b7 a session check that keeps failing shows the error with its status",
+   "testFile": "e2e/auth.flow.spec.ts"
+  },
+  {
+   "file": "apps/web/server/env-schema.ts",
+   "line": 9,
+   "op": "drop-call",
+   "before": "z.string().optional()",
+   "after": "void 0",
+   "check": "types",
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/server/auth.ts",
+   "line": 14,
+   "op": "flip-eq",
+   "before": "const devOrigins = process.env.NODE_ENV === 'production' ? [] : ['exp://**']",
+   "after": "const devOrigins = process.env.NODE_ENV !== 'production' ? [] : ['exp://**']",
+   "check": null,
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/server.ts",
+   "line": 108,
+   "op": "drop-not",
+   "before": "if (!isProd && vite) {",
+   "after": "if (isProd && vite) {",
+   "check": null,
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/server.ts",
+   "line": 99,
+   "op": "flip-logic",
+   "before": "const navigational = req.method === 'GET' || req.method === 'HEAD'",
+   "after": "const navigational = req.method === 'GET' && req.method === 'HEAD'",
+   "check": "types",
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/src/lib/ssr-state.ts",
+   "line": 29,
+   "op": "drop-guard",
+   "before": "if (!payload) return null",
+   "after": "void 0",
+   "check": "types",
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/src/app/sign-up.tsx",
+   "line": 26,
+   "op": "flip-bool",
+   "before": "setLoading(false)",
+   "after": "setLoading(true)",
+   "check": null,
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/server.ts",
+   "line": 141,
+   "op": "off-by-one",
+   "before": ".status(500)",
+   "after": ".status(501)",
+   "check": null,
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/server.ts",
+   "line": 142,
+   "op": "drop-call",
+   "before": ".type('txt')",
+   "after": "void 0",
+   "check": "types",
+   "test": null,
+   "testFile": null
+  },
+  {
+   "file": "apps/web/src/lib/trpc.tsx",
+   "line": 25,
+   "op": "flip-eq",
+   "before": "if (typeof window === 'undefined') {",
+   "after": "if (typeof window !== 'undefined') {",
+   "check": "flows",
+   "test": "[desktop] \u203a e2e/auth.flow.spec.ts:6:1 \u203a auth/sign-up \u00b7 an 8-character password signs a new person up onto their dashboard",
+   "testFile": "e2e/auth.flow.spec.ts"
+  },
+  {
+   "file": "apps/web/src/app/dashboard.tsx",
+   "line": 14,
+   "op": "drop-not",
+   "before": "if (!session) return null",
+   "after": "if (session) return null",
+   "check": "types",
+   "test": null,
+   "testFile": null
+  }
+ ]
+}

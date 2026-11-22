@@ -1,5 +1,14 @@
 # Changes
 
+## 1.1 · 2026-11-21
+
+Nothing about the checks, the names or the rules changed.
+
+- The adoption plan covers every kind of repo: a new project, an existing app with or without tests, an older fork of the starter, and something that isn't a web app.
+- A scale for where a repo stands: not on it, safe to run, named, walked, measured, at the bar. Each has a test for whether it is done.
+- `gate tests` lists every test in a repo and how it last ran.
+- The standard is a site: [testing.dested.com](https://testing.dested.com).
+
 ## 1.0 · 2026-11-21
 
 The first version. Built and corrected on a starter template, then brought to one production app.
