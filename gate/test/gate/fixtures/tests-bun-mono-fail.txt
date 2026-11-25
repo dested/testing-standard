@@ -1,0 +1,130 @@
+$ bun run test:rules
+$ bun scripts/test.ts rules
+✓ test names: every test file is a rule, api or flow test
+
+› @app/mobile test:rules
+$ bun test .rule.test.
+bun test v1.4.3 (c6da4a4d3)
+
+src/lib/resolve-api-url.rule.test.ts:
+(pass) resolveApiUrl > EXPO_PUBLIC_API_URL wins, without its trailing slash [0.20ms]
+(pass) resolveApiUrl > dev: the API next to Metro on the LAN, on apiPort [0.07ms]
+(pass) resolveApiUrl > dev: an IPv6 Metro host keeps its brackets [0.04ms]
+(pass) resolveApiUrl > dev without a Metro host falls back to the deployed server [0.02ms]
+(pass) resolveApiUrl > release builds and OTA bundles talk to the deployed server [0.01ms]
+
+src/lib/ota-hold.rule.test.ts:
+(pass) createHoldGate > runs at once when nothing holds [0.17ms]
+(pass) createHoldGate > defers until the last hold releases, then runs once [0.14ms]
+(pass) createHoldGate > a release called twice counts once [0.03ms]
+(pass) createHoldGate > only the latest waiting reload runs [0.05ms]
+
+ 9 pass
+ 0 fail
+ 16 expect() calls
+Ran 9 tests across 2 files. [6.00ms]
+
+› @app/web test:rules
+$ bun test --preload ./test/preload.rules.ts .rule.test.
+bun test v1.4.3 (c6da4a4d3)
+
+e2e/screens.rule.test.ts:
+(pass) screens > every page route once, a layout counted through its index [0.27ms]
+(pass) screens > a route with no component is not a screen [0.04ms]
+(pass) screenFor > a pathname counts for the deepest route it matches [2.83ms]
+(pass) screenFor > anything unmatched is the 404 [0.44ms]
+(pass) screenFor > every screen a visit can produce is one screens() lists [1.01ms]
+
+server/env-schema.rule.test.ts:
+(pass) optionalSecret > unset and blank both mean not configured [0.28ms]
+(pass) requireValue > returns a set key [0.03ms]
+(pass) requireValue > throws a MissingEnvError that says where to set it [0.21ms]
+
+server/access.rule.test.ts:
+(pass) emailList > splits, trims, lowercases and drops blanks [0.23ms]
+(pass) emailMatches > an exact address, case and whitespace aside [0.06ms]
+(pass) emailMatches > a whole domain, and only that domain [0.03ms]
+(pass) emailMatches > the last @ decides the domain [0.01ms]
+(pass) emailMatches > not an email [0.01ms]
+(pass) signUpAllowed > a blank allowlist is open [0.03ms]
+(pass) signUpAllowed > a set allowlist admits its entries and the admins [0.06ms]
+(pass) isAdminEmail > exact addresses only [0.02ms]
+
+server/demo.rule.test.ts:
+(pass) template demo > the Post demo is removed before shipping (run `bun run demo:drop`) [0.01ms]
+
+server/asset-path.rule.test.ts:
+(pass) isAssetPath > asset misses 404 before SSR [0.09ms]
+(pass) isAssetPath > page paths render, dotted ones included [0.04ms]
+(pass) isAssetPath > a last segment without a dot is a page, even when it reads like an extension [0.02ms]
+
+test/db.rule.test.ts:
+(pass) assertTestDatabase > the template is a *_test database or gate’s gate_* [0.26ms]
+(pass) assertTestDatabase > a clone is <template>_<suffix>, never the template or the dev database [0.17ms]
+(pass) assertTestDatabase > the template check is not satisfied by its clones [0.03ms]
+(pass) withDatabase > swaps only the database, keeping server and credentials [0.11ms]
+
+src/lib/ssr-state.rule.test.ts:
+(pass) SSR state round-trip > a Date in prefetched data is still a Date after hydration [4.07ms]
+(pass) SSR state round-trip > escapes `<` so data cannot close the inline <script> [0.88ms]
+(pass) SSR state round-trip > missing payload hydrates nothing [0.06ms]
+
+src/lib/loader.rule.test.ts:
+1 | import { describe, expect, test } from 'bun:test'
+2 | import { AFTER_SIGN_IN, nextFromSearch, safeNext, signInPath } from './loader'
+3 | 
+4 | describe('safeNext', () => {
+5 |   test('a path on this site passes through', () => {
+6 |     expect(safeNext('/dashboard')).toBe('/dashboard')
+                                       ^
+error: expect(received).toBe(expected)
+
+Expected: "/dashboard"
+Received: null
+
+      at <anonymous> (/w/junk/sal-starter/.gate/tree/apps/web/src/lib/loader.rule.test.ts:6:36)
+(fail) safeNext > a path on this site passes through [0.25ms]
+(pass) safeNext > another host, a scheme or a relative path never does [0.11ms]
+30 |   })
+31 | })
+32 | 
+33 | describe('nextFromSearch', () => {
+34 |   test('reads ?next= and falls back to the signed-in page', () => {
+35 |     expect(nextFromSearch(`?next=${encodeURIComponent('/dashboard?x=1')}`)).toBe('/dashboard?x=1')
+                                                                                 ^
+error: expect(received).toBe(expected)
+
+Expected: "/dashboard?x=1"
+Received: "/dashboard"
+
+      at <anonymous> (/w/junk/sal-starter/.gate/tree/apps/web/src/lib/loader.rule.test.ts:35:77)
+(fail) nextFromSearch > reads ?next= and falls back to the signed-in page [0.71ms]
+(pass) signInPath > carries the current path and search [0.11ms]
+45 |     )
+46 |     expect(signInPath(new Request('http://x.test/'))).toBe('/sign-in')
+47 |   })
+48 |   test('round-trips through nextFromSearch', () => {
+49 |     const path = signInPath(new Request('http://x.test/u/ada?x=1&y=2'))
+50 |     expect(nextFromSearch(new URL(path, 'http://x.test').search)).toBe('/u/ada?x=1&y=2')
+                                                                       ^
+error: expect(received).toBe(expected)
+
+Expected: "/u/ada?x=1&y=2"
+Received: "/dashboard"
+
+      at <anonymous> (/w/junk/sal-starter/.gate/tree/apps/web/src/lib/loader.rule.test.ts:50:67)
+(fail) signInPath > round-trips through nextFromSearch [0.11ms]
+
+3 tests failed:
+(fail) safeNext > a path on this site passes through [0.25ms]
+(fail) nextFromSearch > reads ?next= and falls back to the signed-in page [0.71ms]
+(fail) signInPath > round-trips through nextFromSearch [0.11ms]
+
+ 29 pass
+ 3 fail
+ 106 expect() calls
+Ran 32 tests across 8 files. [107.00ms]
+error: script "test:rules" exited with code 1
+
+✗ @app/web test:rules failed (exit 1). Rerun: bun run --cwd apps/web test:rules
+error: script "test:rules" exited with code 1

@@ -1,0 +1,10 @@
+
+Running 2 tests using 1 worker
+
+(node:836466) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/skip.spec.ts:2:1 › home loads (7ms)
+  -  2 tests/skip.spec.ts:3:6 › billing page
+
+  1 skipped
+  1 passed (522ms)

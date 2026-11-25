@@ -1,0 +1,14 @@
+bun test v1.4.3 (c6da4a4d3)
+
+fail.test.ts:
+error: expect(received).toBe(expected)
+
+Expected: 403
+Received: 401
+
+(fail) posts.create > rejects a signed-out caller [0.20ms]
+
+ 1 pass
+ 1 fail
+ 2 expect() calls
+Ran 2 tests across 1 file. [3.00ms]

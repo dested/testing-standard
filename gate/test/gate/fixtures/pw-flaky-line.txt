@@ -1,0 +1,34 @@
+
+Running 2 tests using 1 worker
+
+(node:836895) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/2] tests/flaky.spec.ts:3:1 › sometimes fails
+(node:837004) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/2] (retries) tests/flaky.spec.ts:3:1 › sometimes fails (retry #1)
+  1) tests/flaky.spec.ts:3:1 › sometimes fails ─────────────────────────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 2
+    Received: 1
+
+      3 | test("sometimes fails", async () => {
+      4 |   const f = "/tmp/gate-pw-flaky-" + process.env.FLAKY_TAG;
+    > 5 |   if (!existsSync(f)) { writeFileSync(f, "1"); expect(1).toBe(2); }
+        |                                                          ^
+      6 | });
+      7 | test("steady", async () => { expect(1).toBe(1); });
+      8 |
+        at /w/junk/destedtui/gate-fx/pw/tests/flaky.spec.ts:5:58
+
+    Error Context: test-results/flaky-sometimes-fails/error-context.md
+
+
+[3/2] tests/flaky.spec.ts:7:1 › steady
+  1 flaky
+    tests/flaky.spec.ts:3:1 › sometimes fails ──────────────────────────────────────────────────────
+  1 passed (1.1s)

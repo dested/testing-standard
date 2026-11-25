@@ -1,2 +1,5 @@
 node_modules
 dist
+
+# gate: the database tests read GATE_TEST_PG_URL from here
+.env.test

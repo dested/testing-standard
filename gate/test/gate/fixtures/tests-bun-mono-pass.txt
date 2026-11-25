@@ -1,0 +1,118 @@
+$ bun run test:rules
+$ bun scripts/test.ts rules
+✓ test names: every test file is a rule, api or flow test
+
+› @app/mobile test:rules
+$ bun test .rule.test.
+bun test v1.4.3 (c6da4a4d3)
+
+src/lib/resolve-api-url.rule.test.ts:
+(pass) resolveApiUrl > EXPO_PUBLIC_API_URL wins, without its trailing slash [0.21ms]
+(pass) resolveApiUrl > dev: the API next to Metro on the LAN, on apiPort [0.06ms]
+(pass) resolveApiUrl > dev: an IPv6 Metro host keeps its brackets [0.03ms]
+(pass) resolveApiUrl > dev without a Metro host falls back to the deployed server [0.02ms]
+(pass) resolveApiUrl > release builds and OTA bundles talk to the deployed server
+
+src/lib/ota-hold.rule.test.ts:
+(pass) createHoldGate > runs at once when nothing holds [0.44ms]
+(pass) createHoldGate > defers until the last hold releases, then runs once [0.10ms]
+(pass) createHoldGate > a release called twice counts once [0.02ms]
+(pass) createHoldGate > only the latest waiting reload runs [0.04ms]
+
+ 9 pass
+ 0 fail
+ 16 expect() calls
+Ran 9 tests across 2 files. [9.00ms]
+
+› @app/web test:rules
+$ bun test --preload ./test/preload.rules.ts .rule.test.
+bun test v1.4.3 (c6da4a4d3)
+
+e2e/screens.rule.test.ts:
+(pass) screens > every page route once, a layout counted through its index [0.25ms]
+(pass) screens > a route with no component is not a screen [0.03ms]
+(pass) screenFor > a pathname counts for the deepest route it matches [2.50ms]
+(pass) screenFor > anything unmatched is the 404 [0.37ms]
+(pass) screenFor > every screen a visit can produce is one screens() lists [0.97ms]
+
+server/env-schema.rule.test.ts:
+(pass) optionalSecret > unset and blank both mean not configured [0.26ms]
+(pass) requireValue > returns a set key [0.03ms]
+(pass) requireValue > throws a MissingEnvError that says where to set it [0.21ms]
+
+server/access.rule.test.ts:
+(pass) emailList > splits, trims, lowercases and drops blanks [0.37ms]
+(pass) emailMatches > an exact address, case and whitespace aside [0.07ms]
+(pass) emailMatches > a whole domain, and only that domain [0.03ms]
+(pass) emailMatches > the last @ decides the domain [0.01ms]
+(pass) emailMatches > not an email [0.01ms]
+(pass) signUpAllowed > a blank allowlist is open [0.03ms]
+(pass) signUpAllowed > a set allowlist admits its entries and the admins [0.09ms]
+(pass) isAdminEmail > exact addresses only [0.04ms]
+
+server/demo.rule.test.ts:
+(pass) template demo > the Post demo is removed before shipping (run `bun run demo:drop`) [0.02ms]
+
+server/asset-path.rule.test.ts:
+(pass) isAssetPath > asset misses 404 before SSR [0.07ms]
+(pass) isAssetPath > page paths render, dotted ones included [0.06ms]
+(pass) isAssetPath > a last segment without a dot is a page, even when it reads like an extension [0.03ms]
+
+test/db.rule.test.ts:
+(pass) assertTestDatabase > the template is a *_test database or gate’s gate_* [0.25ms]
+(pass) assertTestDatabase > a clone is <template>_<suffix>, never the template or the dev database [0.14ms]
+(pass) assertTestDatabase > the template check is not satisfied by its clones [0.02ms]
+(pass) withDatabase > swaps only the database, keeping server and credentials [0.10ms]
+
+src/lib/ssr-state.rule.test.ts:
+(pass) SSR state round-trip > a Date in prefetched data is still a Date after hydration [3.78ms]
+(pass) SSR state round-trip > escapes `<` so data cannot close the inline <script> [0.92ms]
+(pass) SSR state round-trip > missing payload hydrates nothing [0.04ms]
+
+src/lib/loader.rule.test.ts:
+(pass) safeNext > a path on this site passes through [0.08ms]
+(pass) safeNext > another host, a scheme or a relative path never does [0.07ms]
+(pass) nextFromSearch > reads ?next= and falls back to the signed-in page [0.06ms]
+(pass) signInPath > carries the current path and search [0.08ms]
+(pass) signInPath > round-trips through nextFromSearch [0.04ms]
+
+ 32 pass
+ 0 fail
+ 110 expect() calls
+Ran 32 tests across 8 files. [108.00ms]
+
+› @app/brand test:rules
+$ bun test .rule.test.
+bun test v1.4.3 (c6da4a4d3)
+
+brand.rule.test.ts:
+(pass) brand > brand.gen.json is current (run `bun run brand` after editing mark.svg, brand.json or the tokens) [0.35ms]
+(pass) brand > every output exists and is the one `bun run brand` wrote [0.50ms]
+(pass) brand > PNGs have the planned size; opaque ones have no alpha channel (Apple rejects it) [0.42ms]
+(pass) brand > icon.ico holds every planned size [0.24ms]
+(pass) brand > manifest.webmanifest matches project.json and the brand colors [0.13ms]
+(pass) brand > mark.svg parsing [0.18ms]
+
+ 6 pass
+ 0 fail
+ 36 expect() calls
+Ran 6 tests across 1 file. [41.00ms]
+
+› @app/tokens test:rules
+$ bun test .rule.test.
+bun test v1.4.3 (c6da4a4d3)
+
+tokens.rule.test.ts:
+(pass) tokens.css > gives a value to every role theme.css maps (add the missing ones to :root) [0.49ms]
+(pass) tokens.css > colors.json is current (run `bun run tokens` after editing tokens.css) [0.78ms]
+(pass) tokens.css > one theme: no .dark block, no OS color-scheme query [0.07ms]
+(pass) tokens.css > oklch converts to the hex shadcn ships [0.07ms]
+(pass) kickoff > the look is set (run the kickoff skill: .claude/skills/kickoff/SKILL.md) [0.01ms]
+(pass) kickoff > project.json look.scheme matches tokens.css color-scheme [0.04ms]
+
+ 6 pass
+ 0 fail
+ 13 expect() calls
+Ran 6 tests across 1 file. [45.00ms]
+
+✓ test:rules: @app/mobile, @app/web, @app/brand, @app/tokens

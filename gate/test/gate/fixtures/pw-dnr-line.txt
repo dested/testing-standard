@@ -1,0 +1,51 @@
+
+Running 2 tests using 1 worker
+
+(node:837917) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/2] tests/dnr.spec.ts:3:1 › first
+[2/2] tests/dnr.spec.ts:4:1 › second
+(node:837973) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[3/2] (retries) tests/dnr.spec.ts:3:1 › first (retry #1)
+  1) tests/dnr.spec.ts:3:1 › first ─────────────────────────────────────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 2
+    Received: 1
+
+      1 | import { test, expect } from "@playwright/test";
+      2 | test.describe.configure({ mode: "serial" });
+    > 3 | test("first", async () => { expect(1).toBe(2); });
+        |                                       ^
+      4 | test("second", async () => { expect(1).toBe(1); });
+      5 |
+        at /w/junk/destedtui/gate-fx/pw/tests/dnr.spec.ts:3:39
+
+    Error Context: test-results/dnr-first/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 2
+    Received: 1
+
+      1 | import { test, expect } from "@playwright/test";
+      2 | test.describe.configure({ mode: "serial" });
+    > 3 | test("first", async () => { expect(1).toBe(2); });
+        |                                       ^
+      4 | test("second", async () => { expect(1).toBe(1); });
+      5 |
+        at /w/junk/destedtui/gate-fx/pw/tests/dnr.spec.ts:3:39
+
+    Error Context: test-results/dnr-first-retry1/error-context.md
+
+
+[4/2] (retries) tests/dnr.spec.ts:4:1 › second (retry #1)
+  1 failed
+    tests/dnr.spec.ts:3:1 › first ──────────────────────────────────────────────────────────────────
+  1 did not run
