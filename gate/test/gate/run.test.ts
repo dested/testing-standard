@@ -183,7 +183,7 @@ describe("gate init and gate.json", () => {
     expect(gate(sb, dir, ["init"]).code).toBe(2);
     const blk = gate(sb, dir, ["init", "--force", "--mode", "block"]);
     expect(blk.code).toBe(0);
-    expect(blk.stdout.split("\n")[0]).toBe("Sal's standing decision is report mode everywhere (2026-11-20); only use block if he asked in this conversation");
+    expect(blk.stdout.split("\n")[0]).toBe("Report mode is the default and nothing blocks a push; only use block if the repo's owner asked for it in this conversation");
     expect(JSON.parse(readFileSync(join(dir, "gate.json"), "utf8")).mode).toBe("block");
 
     // Uncommitted gate.json: the commit has none → exit 2 naming gate init.

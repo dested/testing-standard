@@ -56,7 +56,7 @@ const esc = (s: string): string => s.replace(/&/g, "&amp;").replace(/</g, "&lt;"
 
 const plural = (n: number, word: string, many = `${word}s`): string => `${n} ${n === 1 ? word : many}`;
 
-/** A Windows path for Sal, a file:// link the browser opens. */
+/** A Windows path for the reader, a file:// link the browser opens. */
 function fileLink(path: string, text?: string): string {
   const win = path.startsWith("/") ? linuxToWin(path) : path;
   return `<a href="${esc(fileHref(path))}">${esc(text ?? win)}</a>`;

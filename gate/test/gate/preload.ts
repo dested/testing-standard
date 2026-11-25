@@ -1,4 +1,4 @@
-// Preloaded for every test file (bunfig.toml): the whole suite must leave Sal's
+// Preloaded for every test file (bunfig.toml): the whole suite must leave the machine's
 // global git config byte-identical. gate never writes git config; this proves it.
 
 import { afterAll } from "bun:test";

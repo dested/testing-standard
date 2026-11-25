@@ -128,11 +128,11 @@ describe("gate guard push", () => {
     commitAll(sb, dir, "flip to report");
     let r = guard(dir, ["origin", "main"]);
     expect(r.code).toBe(1);
-    expect(r.stdout).toContain("this push weakens the gate (mode block → report). That is Sal's call.");
+    expect(r.stdout).toContain("this push weakens the gate (mode block → report). That is the repo owner's call.");
     expect(r.stdout).toContain("gate allow-weaken --sha");
     const flipped = must(dir, "git rev-parse HEAD", sb.env).trim();
     expect(gate(sb, dir, ["allow-weaken", "--sha", flipped]).code).toBe(2);
-    expect(gate(sb, dir, ["allow-weaken", "--sha", flipped, "--why", "Sal: flip it, it's an experiment"]).code).toBe(0);
+    expect(gate(sb, dir, ["allow-weaken", "--sha", flipped, "--why", "owner: flip it, it's an experiment"]).code).toBe(0);
     expect(guard(dir, ["origin", "main"]).code).toBe(0);
     must(dir, "git commit -q --amend -m 'flip to report, reworded'", sb.env);
     expect(guard(dir, ["origin", "main"]).code).toBe(1);
@@ -151,7 +151,7 @@ describe("gate guard push", () => {
     r = guard(dir, ["origin", "main"]);
     expect(r.code).toBe(1);
     expect(r.stdout).toContain("drops check rules");
-    expect(gate(sb, dir, ["allow-weaken", "--sha", "HEAD", "--why", "Sal: rules moved into api"]).code).toBe(0);
+    expect(gate(sb, dir, ["allow-weaken", "--sha", "HEAD", "--why", "owner: rules moved into api"]).code).toBe(0);
     expect(guard(dir, ["origin", "main"]).code).toBe(0);
   });
 

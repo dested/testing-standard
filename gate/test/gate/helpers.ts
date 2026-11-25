@@ -1,5 +1,5 @@
 // Test harness for gate: throwaway git repos in a temp sandbox, the real
-// `bin/gate.mjs` entry, the local Postgres. Nothing here touches Sal's real
+// `bin/gate.mjs` entry, the local Postgres. Nothing here touches the machine's real
 // git config (every git and gate call gets the sandbox's GIT_CONFIG_GLOBAL, and
 // test/gate/preload.ts fails the run if `git config --global -l` changes) and
 // nothing pushes.

@@ -1,15 +1,13 @@
 ---
 name: gate
-description: Sal's testing standard: the `gate` CLI (from the testing-standard repo, `gate/`) runs a repo's checks on a clean copy of a commit, with its own databases, writes a signed receipt, and plants bugs to see whether the checks can fail (`gate probe`). It informs; nothing is gated: every repo is report mode (Sal, 2026-11-20), so never flip a repo to block or propose it. Use whenever a repo has a gate.json, before every push to main or master, when a push is denied with "gate:", when asked to "run the gate", "run the checks", "is this green", "can I push", "why was my push denied", to adopt the gate in a repo ("gate init"), or to read a gate failure. Never forge a receipt, never change a repo's mode (block, or back from it), never run gate allow-weaken unless Sal raises it himself in the conversation, and fix a denied push by running gate, never by another route to the remote.
+description: The testing standard's `gate` CLI (from the testing-standard repo, `gate/`) runs a repo's checks on a clean copy of a commit, with its own databases, writes a signed receipt, and plants bugs to see whether the checks can fail (`gate probe`). It informs; nothing is gated: report mode is the default, so never flip a repo to block or propose it unless the repo's owner asks. Use whenever a repo has a gate.json, before every push to main or master, when a push is denied with "gate:", when asked to "run the gate", "run the checks", "is this green", "can I push", "why was my push denied", to adopt the gate in a repo ("gate init"), or to read a gate failure. Never forge a receipt, never change a repo's mode (block, or back from it), never run gate allow-weaken unless the repo's owner raises it in the conversation, and fix a denied push by running gate, never by another route to the remote.
 ---
 
 # gate: run the checks on a clean copy, know whether they can fail
 
-> **Sal's standing decision, 2026-11-20:** "dont do frozen ropes. i dont want anything gates
-> for now. you can oupsh but dont ever faila  deploy ." Every repo is **report** mode:
-> sal-starter, its forks, everything. Never flip a repo to `block`, never propose it, never
-> run `gate allow-weaken`, unless Sal raises it himself in the conversation. You still run
-> `gate` before pushing to main and fix what is red: that is the job, gated or not.
+> **Report mode is the default, everywhere.** Never flip a repo to `block`, never propose it,
+> never run `gate allow-weaken`, unless the repo's owner raises it in the conversation. You
+> still run `gate` before pushing to main and fix what is red: that is the job, gated or not.
 
 The standard itself is public at https://github.com/dested/testing-standard (`README.md` the
 standard, `adopt.md` how to bring a repo on, `examples.md` real cases); this skill is the commands.
@@ -29,7 +27,7 @@ gate --all                keep going after a failure
 gate --json               one JSON object: ok, checks, receipt, logs, failures, exit
 gate status               mode, HEAD, receipt (pass / failed at <check> / none), last 10 runs
 gate tests                every test and its last result (--failed, --all, --check, --file, --grep, --json)
-gate tests --html         the same as one page for Sal: each test's history, code, steps and screenshots, planted bugs, coverage maps
+gate tests --html         the same as one page for the owner: each test's history, code, steps and screenshots, planted bugs, coverage maps
 gate init                 write gate.json from package.json scripts (report mode)
 gate doctor               what's broken in gate itself, each with its fix
 gate where                work root, logs, receipts, history
@@ -67,10 +65,10 @@ says so. `gate tests --failed` is the short list; `gate tests --json` has every 
 truncated, with `history.lastFailure` (run, log, error) for one that failed before. It exits
 0 even when the last run was red: `gate` judges, `gate tests` reports.
 
-When Sal wants to *see* the tests ("show me the tests", "what do they cover", "a
+When the owner wants to *see* the tests ("show me the tests", "what do they cover", "a
 visualization"), run `gate tests --html`: it writes one self-contained page to
-`<work root>/tests.html` (`W:\junk\<repo>\.gate\tests.html`), opens it in his browser and prints
-its Windows path; give him that path. It opens on one line (green or red, on which commit)
+`<work root>/tests.html` (`gate where` prints the work root), opens it in their browser and prints
+its path (the Windows path from WSL); give them that path. It opens on one line (green or red, on which commit)
 and the problems, with every register behind an expander. Any test opens in a drawer: its
 result per width with history across kept runs, the full error, its code at the commit the run
 checked, and for Playwright the steps it took, its screenshots, and a trace when it failed.
@@ -92,7 +90,7 @@ gate). The schema is in `gate --help` and features/gate.md § Coverage maps.
 FAIL  api     19.8s   211 passed · 1 failed
       posts.create > rejects a signed-out caller
       …last 40 lines of the log…
-      log /w/junk/<repo>/.gate/runs/<run>/api.log
+      log <work root>/runs/<run>/api.log
  --   flows    not run
 FAILED at api. Fix it, commit, run gate again.
 ```
@@ -112,10 +110,10 @@ FAILED at api. Fix it, commit, run gate again.
 
 - **Forge or edit a receipt**, or write one by any route but a passing `gate`. A receipt not
   signed with the machine key is ignored anyway.
-- **Run `gate allow-weaken`** unless Sal said so in this conversation. A push that deletes
+- **Run `gate allow-weaken`** unless the repo's owner said so in this conversation. A push that deletes
   gate.json, flips it to `report`, drops a check, allows skips or unprotects a branch is
-  denied on purpose: that is Sal's call. Tell him what you want to change and why; if he says
-  yes, `gate allow-weaken --sha <sha> --why "<his words>"` allows that one commit.
+  denied on purpose: that is the owner's call. Tell them what you want to change and why; if they
+  say yes, `gate allow-weaken --sha <sha> --why "<their words>"` allows that one commit.
 - **Reach the remote by another route** after a deny: no script, `gh`, API call, other remote
   or refspec that lands on a protected branch. Run `gate`.
 - **Delete or weaken a check, allow skips (`skips: "allow"`), or change a repo's mode** to
@@ -143,7 +141,7 @@ gate probe report              catch rate over time; checks and test files that 
   exact change (the line shows before → after), commit, probe again.
 - Never fix a miss by excluding it. `probe.exclude` and `// probe-ignore: <why>` are for code
   where a change can't be a bug (log formatting, copy); each needs its reason, and widening
-  them, or lowering `minRate`, or trimming `critical`, is Sal's call.
+  them, or lowering `minRate`, or trimming `critical`, is the owner's call.
 - `gate status` ends with the facts: `sampled probe 100% · nothing missed · every check passing`, or
   `open: <why; why>` naming what to do next (run gate, run a probe, fix the misses).
 - The catch rate gate quotes (status, `gate tests`, the page) is the newest **sampled** probe's.
@@ -156,6 +154,6 @@ gate probe report              catch rate over time; checks and test files that 
 `gate init` writes gate.json in **report** mode from the `typecheck`, `test:rules`/`test`,
 `test:api`, `test:flows`/`test:e2e` and `db:deploy` scripts and prints what it couldn't
 detect. Review it, commit it, run `gate`. Report mode never blocks a push, and it is the mode
-for every repo (`gate init --mode block` prints Sal's decision before it does anything).
+for every repo (`gate init --mode block` says so before it does anything).
 
-The full spec: `spec.md` beside this skill's folder (`gate/spec.md` in https://github.com/dested/testing-standard; on Sal's machine `W:\code\testing-standard\gate\spec.md`). Install or update gate: `cd <testing-standard>/gate && bun install && bun link`.
+The full spec: `spec.md` beside this skill's folder (`gate/spec.md` in https://github.com/dested/testing-standard). Install or update gate: `cd <testing-standard>/gate && bun install && bun link`.

@@ -26,7 +26,7 @@ usage:
   gate init [--mode report|block] [--force]   write gate.json from package.json scripts (default report)
   gate guard push --cwd <dir> [--json] -- <git push args>
                               may this agent push? 0 allow · 1 deny (reason + next command) · 2 couldn't parse
-  gate allow-weaken --sha <rev> --why "<Sal's words>"   only when Sal said so in the conversation
+  gate allow-weaken --sha <rev> --why "<the owner's words>"   only when the repo's owner said so in the conversation
   gate probe [--sha <rev>] [--from <file.jsonl>] [--since <rev>] [--max <n>] [--seed <n>]
              [--only-files <glob>] [--json] [--verbose]
                               plant one bug at a time in a clean copy: which check catches it?
@@ -52,8 +52,8 @@ run:
 Checks run on \`git archive <commit>\`, never the working tree, with an allowlisted
 environment and a fresh gate_* database per databases[] entry. Skipped, todo or
 zero-test runs fail the check. A pass writes <git dir>/gate/receipts/<tree>.json;
-gate informs; it doesn't gate. Every repo is report mode (Sal's standing decision,
-2026-11-20): pushes always go through, with what gate knows. gate never installs a
+gate informs; it doesn't gate. Report mode is the default: pushes always go through,
+with what gate knows. Block mode is the repo owner's call. gate never installs a
 git hook or writes git config.
 
 tests:
@@ -97,7 +97,7 @@ exit codes: 0 every check passed · 1 a check failed (your code is red)
             2 usage or gate.json error · 3 gate itself couldn't run`;
 
 /** Printed by `gate init --mode block`, which still does what it's asked. */
-export const BLOCK_NOTE = "Sal's standing decision is report mode everywhere (2026-11-20); only use block if he asked in this conversation";
+export const BLOCK_NOTE = "Report mode is the default and nothing blocks a push; only use block if the repo's owner asked for it in this conversation";
 
 const TRIGGERS = new Set<Trigger>(["manual", "push", "probe"]);
 
@@ -246,7 +246,7 @@ async function main(argv: string[]): Promise<number> {
       }
     }
     case "allow-weaken": {
-      if (!f.sha) throw usage(`gate allow-weaken --sha <rev> --why "<Sal's words>"`);
+      if (!f.sha) throw usage(`gate allow-weaken --sha <rev> --why "<the owner's words>"`);
       const r = allowWeaken(cwd, f.sha, f.why ?? "");
       console.log(`allowed ${r.sha.slice(0, 7)} to weaken the gate (recorded in ${r.path}). Push it now; the allowance is for that commit only`);
       return EXIT.pass;

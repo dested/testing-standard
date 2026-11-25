@@ -249,7 +249,7 @@ function allowPath(repo: Repo): string {
 }
 
 export function allowWeaken(cwd: string, rev: string, why: string): { sha: string; path: string } {
-  if (!why.trim()) throw usage(`gate allow-weaken needs --why "<Sal's words>"`);
+  if (!why.trim()) throw usage(`gate allow-weaken needs --why "<the owner's words>"`);
   const repo = findRepo(cwd);
   const sha = resolveCommit(repo, rev);
   const path = allowPath(repo);
@@ -343,9 +343,9 @@ export function guardPush(cwd: string, args: string[]): GuardResult {
           lines.push(`gate: this push weakens the gate (${what}); allowed for ${short(t.sha)} by gate allow-weaken`);
         } else {
           lines.push(
-            `gate: this push weakens the gate (${what}). That is Sal's call. If Sal said so in this conversation: gate allow-weaken --sha ${short(t.sha)} --why "<his words>", then push again.`,
+            `gate: this push weakens the gate (${what}). That is the repo owner's call. If the owner said so in this conversation: gate allow-weaken --sha ${short(t.sha)} --why "<their words>", then push again.`,
           );
-          next ??= `cd ${repo.top} && gate allow-weaken --sha ${short(t.sha)} --why "<Sal's words>"`;
+          next ??= `cd ${repo.top} && gate allow-weaken --sha ${short(t.sha)} --why "<the owner's words>"`;
           verdict(t, false, `weakens the gate: ${what}`);
           continue;
         }
