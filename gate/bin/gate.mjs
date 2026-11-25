@@ -12,7 +12,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 if (process.platform === "win32") {
-  console.error("gate runs on Linux, macOS and WSL: open a WSL shell in the repo and run gate there");
+  console.error("gate runs on Linux and WSL: open a WSL shell in the repo and run gate there");
   process.exit(2);
 }
 

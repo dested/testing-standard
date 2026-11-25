@@ -108,7 +108,7 @@ agent-guard (`~/.claude/sal/hooks/agent-guard.ts`, in sals-powershell-setup) doe
 ```
 `title` ≤ 80, 1–24 `columns`, ≤ 5000 `rows`. A cell is `true` (covered), `false` (a gap), `null` or missing (doesn't apply), a string ≤ 40 shown as is, or `{ok, text?, by?: [titles]}`. `group` and `coveredBy` are optional; a row with any false cell is a gap. `gate tests` lists each map (rows × columns, gaps, check) or why a file isn't one; `--json` carries them as `maps: [{check, run, file, map?, gaps?, error?}]`, from the run each check's results come from; `--html` draws each as a grid and checks every `coveredBy` title against the last run (failing, or not in it). Unset outside gate: a check writes nothing then. beep3 is the first user (screens × widths from `web/e2e/coverage.ts`, tRPC procedures × callers from `web/server/router.access.md`).
 
-**Windows.** Not built: `bin/gate.mjs` tells you to run gate from WSL and exits 2. Linux, macOS and WSL run it. `gate tests --html` opens the page in Windows' browser from WSL, else with `open` (macOS) or `xdg-open` (Linux).
+**Windows.** Not built: `bin/gate.mjs` tells you to run gate from WSL and exits 2. It runs on Linux and WSL; macOS is untested. `gate tests --html` opens the page in Windows' browser from WSL, else with `open` (macOS) or `xdg-open` (Linux).
 
 ## Where
 

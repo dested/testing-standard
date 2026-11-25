@@ -11,7 +11,7 @@ bun install
 bun link
 ```
 
-Needs [Bun](https://bun.sh), Node, git and tar. Runs on Linux, macOS and WSL. A repo with a database needs a Postgres the caller's `DATABASE_URL` (or a `copy.env` file) points at. To update, `git pull` in the clone: `bun link` points at the folder, so there's nothing to reinstall.
+Needs [Bun](https://bun.sh), Node, git and tar. Runs on Linux and WSL (macOS is untested). A repo with a database needs a Postgres the caller's `DATABASE_URL` (or a `copy.env` file) points at. To update, `git pull` in the clone: `bun link` points at the folder, so there's nothing to reinstall.
 
 ## Use
 
