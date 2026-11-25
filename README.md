@@ -175,7 +175,7 @@ The owner keeps a short click-through list for each app: the flows a person woul
 - **An existing app** takes four steps in a fixed order: its own test databases, the names and an API test for every procedure, flows on every screen, then planted bugs.
 - **An older fork of the starter** gets it through the starter's sync.
 - **Something that isn't a web app** keeps the checks whose question still applies.
-- **The runner** is `gate`, in this repo's [`gate/`](https://github.com/dested/testing-standard/tree/main/gate) folder. It runs on Linux, macOS and WSL, and needs a local Postgres for a repo with a database:
+- **The runner** is `gate`, in this repo's [`gate/`](https://github.com/dested/testing-standard/tree/main/gate) folder. It runs on Linux and WSL, and needs a local Postgres for a repo with a database:
 
   ```bash
   git clone https://github.com/dested/testing-standard

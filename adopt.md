@@ -21,7 +21,7 @@ bun install
 bun link
 ```
 
-It runs on Linux, macOS and WSL, and needs a local Postgres for a repo with a database. `gate doctor` says what is missing, each with its fix. To update it, `git pull` in the clone.
+It runs on Linux and WSL, and needs a local Postgres for a repo with a database. `gate doctor` says what is missing, each with its fix. To update it, `git pull` in the clone.
 
 ## Where a repo stands
 

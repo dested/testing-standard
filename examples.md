@@ -255,12 +255,12 @@ A real app adds the files where a missed bug is never acceptable. A planted-bug 
 A pass, on the starter:
 
 ```
-gate  sal-starter  c9c25a3  report  clean copy · 1 database
-pass  setup    2.3s   1 database from the template cache
+gate  sal-starter  6ce5375  report  clean copy · 1 database
+pass  setup    4.2s   1 database from the template cache
 pass  types    1.4s
-pass  rules    0.3s   53 tests
-pass  api      3.2s   32 tests
-pass  flows   18.0s   32 tests
+pass  rules    2.3s   71 tests
+pass  api      3.1s   34 tests
+pass  flows   19.6s   40 tests
 receipt written · report mode never blocks a push
 ```
 
@@ -298,32 +298,36 @@ A `caught` line names the check and the test that went red. A `MISSED` line show
 Every test the repo has and how it last ran, read from the runs `gate` kept. It runs nothing. This is the starter:
 
 ```
-gate tests  sal-starter  c9c25a3
-last run   2026-11-21 16:00 · c9c25a3 · pass · HEAD has a receipt
-probe      2026-11-21 · 6aa609c · caught 80% · 8 missed
+gate tests  sal-starter  f4a9d24
+last run   2026-11-24 19:35 · 6ce5375 · pass · HEAD is 1 commit past it: no receipt, run gate
+probe      2026-11-21 · 6aa609c · caught 80% · 8 missed · newest sampled
 
 types   no tests              pass                                 1.4s
-rules   53 tests              53 pass                              0.3s
-api     32 tests              32 pass                              3.2s
-flows   16 flows at 2 widths  32 pass                             18.0s
+rules   71 tests              71 pass                              2.3s
+api     34 tests              34 pass                              3.1s
+flows   20 flows at 2 widths  40 pass                             19.6s
 
 rules
-  ✓   4  apps/mobile/src/lib/ota-hold.rule.test.ts         caught none
-  ✓   5  apps/mobile/src/lib/resolve-api-url.rule.test.ts  caught none
-  ✓   5  apps/web/e2e/screens.rule.test.ts                 caught none
-  ✓   8  apps/web/server/access.rule.test.ts               caught 5 planted bugs
-  ✓   3  apps/web/server/asset-path.rule.test.ts           caught 4 planted bugs
-  ✓   1  apps/web/server/demo.rule.test.ts                 caught none
-  ✓   3  apps/web/server/env-schema.rule.test.ts           caught none
-  ✓   5  apps/web/src/lib/loader.rule.test.ts              caught 6 planted bugs
-  ✓   3  apps/web/src/lib/ssr-state.rule.test.ts           caught none
-  ✓   4  apps/web/test/db.rule.test.ts                     caught none
-  ✓   6  packages/brand/brand.rule.test.ts                 caught none
-  ✓   6  packages/tokens/tokens.rule.test.ts               caught none
+  ✓   9  apps/mobile/app.config.rule.test.ts                            caught none
+  ✓   3  apps/mobile/fingerprint.rule.test.ts                           caught none
+  ✓   6  apps/mobile/modules/sideload-update/update-state.rule.test.ts  caught none
+  ✓   4  apps/mobile/src/lib/ota-hold.rule.test.ts                      caught none
+  ✓   5  apps/mobile/src/lib/resolve-api-url.rule.test.ts               caught none
+  ✓   5  apps/web/e2e/screens.rule.test.ts                              caught none
+  ✓   8  apps/web/server/access.rule.test.ts                            caught 5 planted bugs
+  ✓   3  apps/web/server/asset-path.rule.test.ts                        caught 4 planted bugs
+  ✓   1  apps/web/server/demo.rule.test.ts                              caught none
+  ✓   3  apps/web/server/env-schema.rule.test.ts                        caught none
+  ✓   5  apps/web/src/lib/loader.rule.test.ts                           caught 6 planted bugs
+  ✓   3  apps/web/src/lib/ssr-state.rule.test.ts                        caught none
+  ✓   4  apps/web/test/db.rule.test.ts                                  caught none
+  ✓   6  packages/brand/brand.rule.test.ts                              caught none
+  ✓   6  packages/tokens/tokens.rule.test.ts                            caught none
 
 api
   ✓   4  apps/desktop/src/main/router.api.test.ts  caught none
   ✓   6  apps/web/server/demo.api.test.ts          caught 1 planted bug
+  ✓   2  apps/web/server/health.api.test.ts        caught none
   ✓   1  apps/web/server/prisma.api.test.ts        caught 1 planted bug
   ✓   3  apps/web/server/router.api.test.ts        caught 1 planted bug
   ✓   6  apps/web/server/trpc.api.test.ts          caught 5 planted bugs
@@ -332,24 +336,30 @@ api
 
 flows                                                                               desktop    phone
   ✓  10  apps/web/e2e/auth.flow.spec.ts  caught 11 planted bugs
-    auth/sign-up · an 8-character password signs a new person up onto their dashb…  ✓  1.2s  ✓  1.1s
-    auth/sign-up-short-password · a 7-character password is refused in the form     ✓  0.7s  ✓  0.8s
-    auth/sign-up-next · signing up from a protected page lands back on it           ✓  1.0s  ✓  1.2s
-    auth/protected-redirect · a signed-out visit to the dashboard asks to sign in…  ✓  0.6s  ✓  0.6s
-    auth/sign-in-next · signing in returns to the page and query asked for          ✓  1.4s  ✓  1.1s
-    auth/off-site-next · an off-site ?next= is ignored                              ✓  1.2s  ✓  0.9s
-    auth/sign-out · signing out lands home, and Back does not reopen the dashboard  ✓  0.8s  ✓  1.1s
-    auth/dashboard-ssr · a hard load of the dashboard hands React Query a real Da…  ✓  0.8s  ✓  0.7s
-    auth/session-check-retry · one failed session check on a navigation still loa…  ✓  1.9s  ✓  2.0s
-    auth/session-check-error · a session check that keeps failing shows the error…  ✓  2.0s  ✓  2.0s
+    auth/sign-up · an 8-character password signs a new person up onto their dashb…  ✓  1.3s  ✓  1.0s
+    auth/sign-up-short-password · a 7-character password is refused in the form     ✓  0.8s  ✓  0.8s
+    auth/sign-up-next · signing up from a protected page lands back on it           ✓  1.1s  ✓  1.1s
+    auth/protected-redirect · a signed-out visit to the dashboard asks to sign in…  ✓  0.5s  ✓  0.6s
+    auth/sign-in-next · signing in returns to the page and query asked for          ✓  1.0s  ✓  0.9s
+    auth/off-site-next · an off-site ?next= is ignored                              ✓  0.7s  ✓  1.0s
+    auth/sign-out · signing out lands home, and Back does not reopen the dashboard  ✓  0.7s  ✓  1.0s
+    auth/dashboard-ssr · a hard load of the dashboard hands React Query a real Da…  ✓  0.6s  ✓  0.6s
+    auth/session-check-retry · one failed session check on a navigation still loa…  ✓  1.8s  ✓  1.9s
+    auth/session-check-error · a session check that keeps failing shows the error…  ✓  1.9s  ✓  1.9s
   ✓   2  apps/web/e2e/demo.flow.spec.ts  caught 3 planted bugs
-    demo/posts-create · a new post shows in the list, before and after a reload     ✓  0.8s  ✓  0.9s
-    on an empty database › demo/posts-empty · "No posts yet" until the first post…  ✓  3.4s  ✓  3.3s
+    demo/posts-create · a new post shows in the list, before and after a reload     ✓  0.7s  ✓  0.9s
+    on an empty database › demo/posts-empty · "No posts yet" until the first post…  ✓  3.7s  ✓  4.4s
+  ✓   1  apps/web/e2e/health.flow.spec.ts  caught none
+    health/commit · /healthz reports the commit the server was deployed as          ✓  0.1s  ✓  0.2s
+  ✓   3  apps/web/e2e/no-overflow.flow.spec.ts  caught none
+    layout/no-overflow-list · every screen is in the overflow check                 ✓  0.1s  ✓  0.2s
+    layout/no-overflow · pages for a signed-in person fit every width from 320 to…  ✓  1.0s  ✓  1.4s
+    layout/no-overflow · pages for signed out fit every width from 320 to 1920px    ✓  2.1s  ✓  2.5s
   ✓   4  apps/web/e2e/shell.flow.spec.ts  caught 2 planted bugs
     shell/home · the home page shows the product name                               ✓  0.5s  ✓  0.5s
-    shell/not-found · an unknown page shows the 404 screen with a 404 status        ✓  0.6s  ✓  0.6s
+    shell/not-found · an unknown page shows the 404 screen with a 404 status        ✓  0.5s  ✓  0.6s
     shell/not-found-asset · an asset-looking path 404s without the app              ✓  0.1s  ✓  0.2s
-    shell/dashboard · the nav link opens the dashboard                              ✓  0.7s  ✓  0.7s
+    shell/dashboard · the nav link opens the dashboard                              ✓  0.6s  ✓  0.7s
 
 not run yet
   ·  recipes/ai/files/apps/web/server/ai/claude.api.test.ts
@@ -357,10 +367,10 @@ not run yet
   ·  recipes/ws/files/apps/web/server/trpc-ws.api.test.ts
 
 caught none: a file can be idle because no bug landed near it
-history over the 13 kept runs · every test: gate tests --all · agents: --json
+history over the 18 kept runs · every test: gate tests --all · the page: --html · agents: --json
 ```
 
-Each flow shows both widths side by side. `caught none` next to a file means no stored planted-bug run has gone red in it yet, which can be because no bug landed near it. `not run yet` lists test files that exist at the commit and have no recorded result: here, three files in optional add-ons that no workspace runs.
+The header names the run the results come from, and says when HEAD has moved past it: here by one commit, so there is no receipt for HEAD yet. Each flow shows both widths side by side. `caught none` next to a file means no stored planted-bug run has gone red in it yet, which can be because no bug landed near it. `not run yet` lists test files that exist at the commit and have no recorded result: here, three files in optional add-ons that no workspace runs.
 
 `gate tests --failed` keeps only what is not a clean pass, `--all` lists every test by name, and `--json` prints everything for an agent. It exits 0 even when the last run was red: `gate` judges, `gate tests` reports.
 

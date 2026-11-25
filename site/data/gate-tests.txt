@@ -1,24 +1,24 @@
-gate tests  sal-starter  c9c25a3
-last run   2026-11-21 16:00 · c9c25a3 · pass · HEAD has a receipt
-probe      2026-11-21 · 6aa609c · caught 80% · 8 missed
+gate tests  sal-starter  f4a9d24
+last run   2026-11-24 19:35 · 6ce5375 · pass · HEAD is 1 commit past it: no receipt, run gate
+probe      2026-11-21 · 6aa609c · caught 80% · 8 missed · newest sampled
 
 types   no tests              pass                                 1.4s
-rules   53 tests              53 pass                              0.3s
-api     32 tests              32 pass                              3.2s
-flows   16 flows at 2 widths  32 pass                             18.0s
+rules   71 tests              71 pass                              2.3s
+api     34 tests              34 pass                              3.1s
+flows   20 flows at 2 widths  40 pass                             19.6s
 
 …
 
 flows                                                                               desktop    phone
   ✓  10  apps/web/e2e/auth.flow.spec.ts  caught 11 planted bugs
-    auth/sign-up · an 8-character password signs a new person up onto their dashb…  ✓  1.2s  ✓  1.1s
-    auth/sign-up-short-password · a 7-character password is refused in the form     ✓  0.7s  ✓  0.8s
-    auth/sign-up-next · signing up from a protected page lands back on it           ✓  1.0s  ✓  1.2s
-    auth/protected-redirect · a signed-out visit to the dashboard asks to sign in…  ✓  0.6s  ✓  0.6s
-    auth/sign-in-next · signing in returns to the page and query asked for          ✓  1.4s  ✓  1.1s
-    auth/off-site-next · an off-site ?next= is ignored                              ✓  1.2s  ✓  0.9s
-    auth/sign-out · signing out lands home, and Back does not reopen the dashboard  ✓  0.8s  ✓  1.1s
-    auth/dashboard-ssr · a hard load of the dashboard hands React Query a real Da…  ✓  0.8s  ✓  0.7s
-    auth/session-check-retry · one failed session check on a navigation still loa…  ✓  1.9s  ✓  2.0s
-    auth/session-check-error · a session check that keeps failing shows the error…  ✓  2.0s  ✓  2.0s
+    auth/sign-up · an 8-character password signs a new person up onto their dashb…  ✓  1.3s  ✓  1.0s
+    auth/sign-up-short-password · a 7-character password is refused in the form     ✓  0.8s  ✓  0.8s
+    auth/sign-up-next · signing up from a protected page lands back on it           ✓  1.1s  ✓  1.1s
+    auth/protected-redirect · a signed-out visit to the dashboard asks to sign in…  ✓  0.5s  ✓  0.6s
+    auth/sign-in-next · signing in returns to the page and query asked for          ✓  1.0s  ✓  0.9s
+    auth/off-site-next · an off-site ?next= is ignored                              ✓  0.7s  ✓  1.0s
+    auth/sign-out · signing out lands home, and Back does not reopen the dashboard  ✓  0.7s  ✓  1.0s
+    auth/dashboard-ssr · a hard load of the dashboard hands React Query a real Da…  ✓  0.6s  ✓  0.6s
+    auth/session-check-retry · one failed session check on a navigation still loa…  ✓  1.8s  ✓  1.9s
+    auth/session-check-error · a session check that keeps failing shows the error…  ✓  1.9s  ✓  1.9s
 …

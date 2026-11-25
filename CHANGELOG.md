@@ -5,7 +5,7 @@
 Nothing about the checks, the names or the rules changed. `gate` keeps the same command, flags, exit codes and `gate.json`.
 
 - `gate` lives in this repo now, in [`gate/`](https://github.com/dested/testing-standard/tree/main/gate): the CLI, [its spec](https://github.com/dested/testing-standard/blob/main/gate/spec.md), the contract it was built to, and its Claude Code skill. Everything the standard needs is in one place.
-- The install is a clone of this repo, then `bun install` and `bun link` in `gate/`. It runs on Linux, macOS and WSL.
+- The install is a clone of this repo, then `bun install` and `bun link` in `gate/`. It runs on Linux and WSL.
 - `gate tests --html` puts every test on one page: what is red first, then each test's history, error, steps, code and screenshots, the planted bugs in each source file, and any coverage maps the checks wrote. [The examples](examples.md#the-tests-page-gate-tests---html) show it on the starter.
 
 ## 1.1 · 2026-11-21
