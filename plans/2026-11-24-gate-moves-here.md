@@ -1,6 +1,6 @@
 # gate moves into testing-standard
 
-> Status: **active** · 2026-11-24 · board #900
+> Status: **done** · 2026-11-24 · board #900
 
 Sal, 2026-11-24: "take it out of destedtui and put it here. i need everythign testing related to be here. im sharing this with other people anticipating it's complete."
 
