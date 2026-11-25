@@ -6,7 +6,8 @@ import { join } from 'node:path'
 import { z } from 'zod'
 import { codeBlock, terminal } from './code'
 import { examples, type Sample } from './examples'
-import { esc, inline } from './html'
+import { esc, inline, slug } from './html'
+import { shot } from './image'
 import { MARK } from './layout'
 
 const check = z.enum(['types', 'rules', 'api', 'flows'])
@@ -223,6 +224,10 @@ export async function landing(): Promise<string> {
   const first = Math.max(0, bugs.findIndex((b) => b.check === 'api'))
   const gateOut = await text('gate.txt')
   const testsOut = await text('gate-tests.txt')
+  const testsPage = await shot(
+    'site/public/tests-page.png',
+    'The starter’s tests page: all green on 6ce5375, 145 test results, none failing, a catch rate of 80% against the 90% bar, and 8 planted bugs missed',
+  )
 
   const cells = bugs
     .map((b, i) => {
@@ -353,6 +358,15 @@ ${terminal(testsOut, 'gate tests')}
 <div><b>It runs nothing</b>It reads the runs <code>gate</code> already kept: each test’s last result, how long it took, and whether it has failed before.</div>
 <div><b>It names the idle tests</b>Each test file shows how many planted bugs it has caught, and a file that exists but never ran is listed.</div>
 <div><b>It narrows on request</b><code>--failed</code> for what is not a clean pass, <code>--all</code> for every test by name, <code>--json</code> for an agent.</div>
+</div>
+<div class="page-shot">
+<h3><code>gate tests --html</code> puts it on one page</h3>
+${testsPage}
+<div class="sheet facts">
+<div><b>The answer comes first</b>Green or red, on which commit, what fails, and the newest sampled catch rate against the bar.</div>
+<div><b>Any test opens</b>Its result at each width over the kept runs, the error, every step with its locator, its code and its screenshots.</div>
+<div><b>Every planted bug has a row</b>Each source file’s planted changes, and the check and test that caught each one, or that nothing did. <a href="/examples/#${slug('The tests page: gate tests --html')}">See the whole page</a></div>
+</div>
 </div>
 </div></section>
 

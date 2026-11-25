@@ -363,3 +363,48 @@ history over the 13 kept runs · every test: gate tests --all · agents: --json
 Each flow shows both widths side by side. `caught none` next to a file means no stored planted-bug run has gone red in it yet, which can be because no bug landed near it. `not run yet` lists test files that exist at the commit and have no recorded result: here, three files in optional add-ons that no workspace runs.
 
 `gate tests --failed` keeps only what is not a clean pass, `--all` lists every test by name, and `--json` prints everything for an agent. It exits 0 even when the last run was red: `gate` judges, `gate tests` reports.
+
+## The tests page: `gate tests --html`
+
+`gate tests --html` writes the same report as one page and opens it in the browser. It is one file with its styles, script and data inline, and the screenshots beside it, so there is nothing to serve. It runs nothing either. This is the starter:
+
+![The starter's tests page: all green on 6ce5375, 145 test results, none failing, a catch rate of 80% against the 90% bar, and 8 planted bugs missed](site/public/tests-page.png)
+
+The top is the answer: green or red and on which commit, how many test results and how many fail, the catch rate of the newest sampled planted-bug run against the bar, and how many bugs it missed. A replay of a list already fixed is never the number on top. Below it:
+
+- **Problems**, left out when there are none: every test that isn't a clean pass, a check that failed with no test to blame, planted bugs that passed every check, coverage maps with gaps, and test files no run named.
+- **Checks**: each check's result, count and time, the run and commit its results come from, and its log.
+- **Flows** grouped by the feature part of each title, with a column per width. **Rules** and **API** grouped by test file. A group opens by itself when anything in it isn't a clean pass.
+- **Planted bugs**: how many were caught of how many planted, each run's catch rate against the bar, and every planted change in each source file, with the line before and after and the check and test that caught it, or that nothing did.
+- **Coverage maps** the checks wrote, the **source files no planted bug has landed in**, and the **test files that have not run yet**.
+
+Any test opens on a click, with its own address, so Back closes it:
+
+![A flow opened on the starter's tests page: passed at both widths in all 13 kept runs, its steps with each locator and time, and its code with the lines the steps ran on lit](site/public/tests-page-test.png)
+
+It shows the result at each width, a square for each kept run, the full error, the screenshots and files the run kept, every step with its locator and time, the test's own code at the commit the run checked with the lines a step ran on lit, and the planted bugs it caught. Steps, errors and failure screenshots need nothing from the repo. A screenshot of every passing flow's last screen needs one line in the Playwright config:
+
+```ts
+screenshot: process.env.GATE === '1' ? 'on' : 'only-on-failure',
+```
+
+### Coverage maps
+
+A check can say what it covers. While it runs under `gate`, `$GATE_COVERAGE` names an empty folder, and each `<name>.json` the check writes there is drawn on the page as a grid, such as every screen against both widths. A row with a `false` cell is a gap, and the page checks each `coveredBy` title against the last run:
+
+```json
+{
+  "title": "Screens × widths",
+  "columns": ["desktop", "phone"],
+  "rows": [
+    {
+      "item": "/settings",
+      "group": "account",
+      "cells": { "desktop": true, "phone": false },
+      "coveredBy": ["settings/profile · a new name shows after a reload"]
+    }
+  ]
+}
+```
+
+A cell is `true` (covered), `false` (a gap), `null` (doesn't apply) or a short text shown as is. Outside `gate` the variable is unset and the check writes nothing.

@@ -5,6 +5,7 @@ import { join } from 'node:path'
 import { Marked, type Token, type Tokens } from 'marked'
 import { codeBlock } from './code'
 import { esc, slug } from './html'
+import { publicPath, shot } from './image'
 import type { NavKey } from './layout'
 
 export type Doc = { slug: Exclude<NavKey, 'home'>; file: string; label: string; description: string }
@@ -48,6 +49,10 @@ function isCode(token: Token): token is Tokens.Code {
   return token.type === 'code' && 'text' in token && typeof token.text === 'string'
 }
 
+function isImage(token: Token): token is Tokens.Image {
+  return token.type === 'image' && 'href' in token && typeof token.href === 'string'
+}
+
 /** `adopt.md#x` → `/adopt/#x`; anything else is left alone. */
 function siteHref(href: string): string {
   const match = /^([A-Za-z]+\.md)(#.*)?$/.exec(href)
@@ -64,6 +69,7 @@ export async function renderDoc(doc: Doc): Promise<Rendered> {
   source = source.replace(/\nRead it as a site at \[testing\.dested\.com\]\([^)]*\)\.\n/, '\n')
 
   const highlighted = new WeakMap<Tokens.Code, string>()
+  const shots = new WeakMap<Tokens.Image, string>()
   const sections: Rendered['sections'] = []
   let title = doc.label
 
@@ -71,8 +77,8 @@ export async function renderDoc(doc: Doc): Promise<Rendered> {
     async: true,
     gfm: true,
     async walkTokens(token) {
-      if (!isCode(token)) return
-      highlighted.set(token, await codeBlock(token.text, token.lang))
+      if (isCode(token)) highlighted.set(token, await codeBlock(token.text, token.lang))
+      else if (isImage(token) && publicPath(token.href)) shots.set(token, await shot(token.href, token.text))
     },
     renderer: {
       code(token) {
@@ -88,6 +94,9 @@ export async function renderDoc(doc: Doc): Promise<Rendered> {
         const id = slug(text)
         if (token.depth === 2) sections.push({ id, text })
         return `<h${token.depth} id="${id}"><a href="#${id}">${inner}</a></h${token.depth}>\n`
+      },
+      image(token) {
+        return shots.get(token) ?? `<img src="${esc(token.href)}" alt="${esc(token.text)}">`
       },
       link(token) {
         const href = siteHref(token.href)

@@ -66,7 +66,7 @@ ${meta.current === 'home' ? `<script>${REDIRECT};${REPLAY}</script>\n` : ''}<lin
 ${body}
 <footer class="foot"><div class="wrap">
 <span>Testing standard ${esc(meta.version)}</span>
-<nav aria-label="More"><a href="/changes/">Changes</a><a href="${REPO}">The standard on GitHub</a><a href="https://github.com/dested/sal-starter">The starter</a><a href="https://github.com/dested/destedtui">gate</a></nav>
+<nav aria-label="More"><a href="/changes/">Changes</a><a href="${REPO}">The standard on GitHub</a><a href="https://github.com/dested/sal-starter">The starter</a><a href="${REPO}/tree/main/gate">gate</a></nav>
 </div></footer>
 <script src="${meta.assets.js}" defer></script>
 </body>

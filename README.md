@@ -1,6 +1,6 @@
 # Testing standard
 
-Version 1.1 · 2026-11-21
+Version 1.2 · 2026-11-24
 
 Read it as a site at [testing.dested.com](https://testing.dested.com).
 
@@ -14,6 +14,7 @@ It is written for TypeScript apps on React, tRPC, Postgres and Prisma, run with 
 - [`examples.md`](examples.md): one real example of each test, the access table, `gate.json` and what each command prints
 - [`evidence.md`](evidence.md): what was measured before and after
 - [`CHANGELOG.md`](CHANGELOG.md): what changed between versions
+- [`gate/`](https://github.com/dested/testing-standard/tree/main/gate): the runner, with [its spec](https://github.com/dested/testing-standard/blob/main/gate/spec.md) and its Claude Code skill
 
 ## Five checks
 
@@ -61,7 +62,7 @@ The name says what a test is allowed to depend on, so nobody has to open a file 
 
 ## One command: `gate`
 
-[`gate`](https://github.com/dested/destedtui/blob/master/features/gate.md) reads `gate.json` at the repo root and runs the checks in order:
+[`gate`](https://github.com/dested/testing-standard/tree/main/gate) reads `gate.json` at the repo root and runs the checks in order:
 
 1. Copies the commit with `git archive` into a work folder. Uncommitted and untracked files are left behind.
 2. Creates a fresh, migrated `gate_*` Postgres database for the run and hands the checks its URL. A template keyed on the schema makes this quick the second time.
@@ -75,6 +76,7 @@ gate --dirty         HEAD plus uncommitted files, for a quick look (no receipt)
 gate --only api      one check (no receipt)
 gate status          the mode, the receipt for HEAD, the last runs, the newest planted-bug run
 gate tests           every test in the repo and how it last ran
+gate tests --html    the same as one page: what is red, each test's history, steps and code, planted bugs per file
 gate init            write gate.json from the repo's scripts
 gate doctor          what is broken in gate itself, each with its fix
 ```
@@ -173,4 +175,11 @@ The owner keeps a short click-through list for each app: the flows a person woul
 - **An existing app** takes four steps in a fixed order: its own test databases, the names and an API test for every procedure, flows on every screen, then planted bugs.
 - **An older fork of the starter** gets it through the starter's sync.
 - **Something that isn't a web app** keeps the checks whose question still applies.
-- **The runner** is `gate`, part of [destedtui](https://github.com/dested/destedtui): clone it, `bun install`, `bun link`. It runs on Linux and WSL, and needs a local Postgres for a repo with a database.
+- **The runner** is `gate`, in this repo's [`gate/`](https://github.com/dested/testing-standard/tree/main/gate) folder. It runs on Linux, macOS and WSL, and needs a local Postgres for a repo with a database:
+
+  ```bash
+  git clone https://github.com/dested/testing-standard
+  cd testing-standard/gate
+  bun install
+  bun link
+  ```

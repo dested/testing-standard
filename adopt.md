@@ -12,7 +12,16 @@ How a repo gets onto the standard, and how to tell where it stands. Find your ca
 
 ## Before any of them
 
-Install the runner once per machine. `gate` is part of [destedtui](https://github.com/dested/destedtui): clone it, `bun install`, `bun link`. It runs on Linux and WSL and needs a local Postgres for a repo with a database. `gate doctor` says what is missing, each with its fix.
+Install the runner once per machine. `gate` lives in this repo, in [`gate/`](https://github.com/dested/testing-standard/tree/main/gate):
+
+```bash
+git clone https://github.com/dested/testing-standard
+cd testing-standard/gate
+bun install
+bun link
+```
+
+It runs on Linux, macOS and WSL, and needs a local Postgres for a repo with a database. `gate doctor` says what is missing, each with its fix. To update it, `git pull` in the clone.
 
 ## Where a repo stands
 
@@ -132,6 +141,7 @@ The standard was built and measured on web apps. For other shapes, keep each che
 
 - **Every change follows the six steps.** A check written after the fact has never been seen failing.
 - **`gate tests` shows the state of every test**: what the repo has, how each one last ran, which have ever failed, and which have never caught a planted bug.
+- **`gate tests --html` puts it on one page** and opens it: what is red first, then every test with its history, steps, code and screenshots, the planted bugs in each source file, and any coverage maps the checks wrote. It is one file with nothing to serve.
 - **Plant bugs when you want to know, with a new seed each time.** After a large change, before a release that touches the critical files, and after writing tests for the last run's misses. `gate probe report` shows the rate over time.
 - **A red run is information.** Report mode records it and lets the push through. If you push past one, say which check, what failed and why.
 

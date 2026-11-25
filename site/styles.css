@@ -309,6 +309,14 @@ html.anim .cell:not(.lit)::after { display: none; }
   .cell { transition: none; }
 }
 
+/* Screenshots: the home page's tests page, and any image in a doc. */
+.shot { display: block; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--sheet); }
+.shot img { display: block; width: 100%; height: auto; }
+.page-shot { margin-top: clamp(36px, 5vw, 56px); }
+.page-shot h3 { font-size: clamp(21px, 2.4vw, 26px); letter-spacing: -0.015em; margin-bottom: 18px; }
+.page-shot h3 code { font: 500 0.82em var(--mono); }
+.page-shot .facts a { color: var(--ink); }
+
 /* ---------- the share card: dev only, see site/README.md ---------- */
 .og { width: 1200px; height: 630px; background: var(--paper); padding: 56px 60px; display: grid; grid-template-columns: minmax(0, 1fr) 468px; gap: 52px; align-items: center; overflow: hidden; }
 .og-say { display: grid; gap: 34px; align-content: center; }
@@ -319,3 +327,4 @@ html.anim .cell:not(.lit)::after { display: none; }
 .og-board .cells { gap: 8px; }
 .og-board .tally strong { font-size: 50px; }
 .og-board .tally span { font-size: 21px; }
+
